@@ -30,13 +30,13 @@ st.markdown("""
 .pack-title {
     font-size: 1.5rem;
     font-weight: 800;
-    color: rgba(255,255,255,0.92);
+    color: var(--text-color);
     letter-spacing: -0.01em;
     line-height: 1.2;
 }
 .pack-subtitle {
     font-size: 0.8rem;
-    color: rgba(255,255,255,0.32);
+    color: color-mix(in srgb, var(--text-color) 42%, transparent);
     margin-top: 0.25rem;
     line-height: 1.45;
 }
@@ -47,7 +47,7 @@ st.markdown("""
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.28);
+    color: color-mix(in srgb, var(--text-color) 28%, transparent);
     margin: 1.1rem 0 0.55rem;
     display: flex;
     align-items: center;
@@ -57,7 +57,7 @@ st.markdown("""
     content: '';
     flex: 1;
     height: 1px;
-    background: rgba(255,255,255,0.06);
+    background: color-mix(in srgb, var(--text-color) 6%, transparent);
 }
 
 /* ── Pack-ready banner ────────────────────────────────────────── */
@@ -90,8 +90,8 @@ st.markdown("""
 
 /* ── Stat mini-cards ──────────────────────────────────────────── */
 .mini-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: var(--secondary-background-color);
+    border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent);
     border-radius: 8px;
     padding: 0.65rem 0.8rem;
     text-align: center;
@@ -99,7 +99,7 @@ st.markdown("""
 .mini-card .mc-num {
     font-size: 1.5rem;
     font-weight: 800;
-    color: #fff;
+    color: var(--text-color);
     line-height: 1;
 }
 .mini-card .mc-lbl {
@@ -107,7 +107,7 @@ st.markdown("""
     font-weight: 700;
     letter-spacing: 0.09em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.28);
+    color: color-mix(in srgb, var(--text-color) 28%, transparent);
     margin-top: 0.22rem;
 }
 
@@ -144,7 +144,7 @@ if not Path(db_path).exists():
 
 st.markdown("## 📦 Export Pack")
 st.markdown(
-    '<p style="color:rgba(255,255,255,0.42);margin-top:-0.4rem;font-size:0.9rem;">'
+    '<p class="pack-subtitle" style="margin-top:-0.4rem;font-size:0.9rem;">'
     'Build a focused Anki study deck from your weakest vocabulary items — '
     'combines the worst-performing items (by window accuracy) with the most-missed items (all-time).'
     '</p>',

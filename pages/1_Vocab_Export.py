@@ -79,12 +79,12 @@ st.markdown("""
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: color-mix(in srgb, var(--text-color) 5%, transparent);
+    border: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent);
     border-radius: 20px;
     padding: 0.2rem 0.65rem;
     font-size: 0.75rem;
-    color: rgba(255,255,255,0.65);
+    color: color-mix(in srgb, var(--text-color) 65%, transparent);
 }
 .field-chip .dot {
     width: 6px; height: 6px;
@@ -95,7 +95,7 @@ st.markdown("""
 .anki-card {
     border-radius: 10px;
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent);
     max-width: 420px;
     margin: 0.5rem auto;
 }
@@ -123,28 +123,28 @@ st.markdown("""
     margin-top: 0.25rem;
 }
 .anki-back {
-    background: rgba(255,255,255,0.04);
+    background: color-mix(in srgb, var(--text-color) 4%, transparent);
     padding: 0.8rem 1.4rem;
     text-align: center;
-    border-top: 1px solid rgba(255,255,255,0.08);
+    border-top: 1px solid color-mix(in srgb, var(--text-color) 8%, transparent);
 }
 .anki-back .ab-label {
     font-size: 0.6rem;
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
+    color: color-mix(in srgb, var(--text-color) 30%, transparent);
     margin-bottom: 0.3rem;
 }
 .anki-back .ab-word {
     font-size: 1.1rem;
     font-weight: 600;
-    color: rgba(255,255,255,0.88);
+    color: color-mix(in srgb, var(--text-color) 88%, transparent);
 }
 /* ── Download cards ─────────────────────────────────────────────── */
 .dl-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: color-mix(in srgb, var(--text-color) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent);
     border-radius: 8px;
     padding: 0.9rem 1rem 0.6rem;
     margin-bottom: 0.5rem;
@@ -152,12 +152,12 @@ st.markdown("""
 .dl-card .dl-title {
     font-weight: 600;
     font-size: 0.9rem;
-    color: rgba(255,255,255,0.85);
+    color: color-mix(in srgb, var(--text-color) 85%, transparent);
     margin-bottom: 0.15rem;
 }
 .dl-card .dl-desc {
     font-size: 0.73rem;
-    color: rgba(255,255,255,0.38);
+    color: color-mix(in srgb, var(--text-color) 38%, transparent);
     margin-bottom: 0.65rem;
     line-height: 1.4;
 }
@@ -172,7 +172,7 @@ st.markdown("""
     border-radius: 8px;
     padding: 0.7rem 0.6rem 0.5rem;
     text-align: center;
-    border: 1px solid rgba(255,255,255,0.06);
+    border: 1px solid color-mix(in srgb, var(--text-color) 6%, transparent);
 }
 .result-pill .rp-num {
     font-size: 1.6rem;
@@ -209,7 +209,7 @@ st.markdown("""
 # ── Page header ──────────────────────────────────────────────────────────────
 st.markdown("## 📝 Vocab Export")
 st.markdown(
-    '<p style="color:rgba(255,255,255,0.45);margin-top:-0.4rem;font-size:0.9rem;">'
+    '<p style="color:color-mix(in srgb, var(--text-color) 45%, transparent);margin-top:-0.4rem;font-size:0.9rem;">'
     "Paste raw German words or phrases — GPT-4o enriches each one and generates "
     "Anki-ready flashcard exports."
     "</p>",
@@ -242,7 +242,7 @@ raw_text = st.text_area(
 if raw_text.strip():
     phrase_count = len([l for l in raw_text.strip().splitlines() if l.strip()])
     st.markdown(
-        f'<span style="font-size:0.78rem; color:rgba(255,255,255,0.35);">'
+        f'<span style="font-size:0.78rem; color:color-mix(in srgb, var(--text-color) 35%, transparent);">'
         f'{phrase_count} phrase{"s" if phrase_count != 1 else ""} detected</span>',
         unsafe_allow_html=True,
     )
@@ -310,7 +310,7 @@ if process_clicked and raw_text.strip():
     st.markdown(
         f'<div style="height:1rem"></div>'
         f'<h3 style="margin-bottom:0.2rem">Enriched Vocabulary {cached_badge}</h3>'
-        f'<p style="color:rgba(255,255,255,0.4); font-size:0.83rem; margin-top:0;">'
+        f'<p style="color:color-mix(in srgb, var(--text-color) 40%, transparent); font-size:0.83rem; margin-top:0;">'
         f'{len(df)} item{"s" if len(df) != 1 else ""} enriched</p>',
         unsafe_allow_html=True,
     )
@@ -340,7 +340,7 @@ if process_clicked and raw_text.strip():
     # ── Tab 2: Anki card preview ─────────────────────────────────────────
     with tab_anki:
         st.markdown(
-            '<p style="color:rgba(255,255,255,0.4); font-size:0.82rem; margin-bottom:0.75rem;">'
+            '<p style="color:color-mix(in srgb, var(--text-color) 40%, transparent); font-size:0.82rem; margin-bottom:0.75rem;">'
             "Each card has the <strong>English meaning + grammar notes</strong> on the front "
             "and the <strong>German word with article</strong> on the back.</p>",
             unsafe_allow_html=True,
@@ -424,7 +424,7 @@ if process_clicked and raw_text.strip():
         st.markdown('<div style="height:0.75rem"></div>', unsafe_allow_html=True)
         st.markdown(
             '<div style="font-size:0.65rem; font-weight:700; letter-spacing:0.1em; '
-            'text-transform:uppercase; color:rgba(255,255,255,0.35); margin-bottom:0.5rem;">'
+            'text-transform:uppercase; color:color-mix(in srgb, var(--text-color) 35%, transparent); margin-bottom:0.5rem;">'
             'Import to practice database</div>',
             unsafe_allow_html=True,
         )

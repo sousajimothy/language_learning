@@ -97,6 +97,10 @@ def render_sidebar() -> None:
     # ── Global CSS ──────────────────────────────────────────────────────────
     st.markdown("""
 <style>
+/* ── Theme-adaptive shorthand ──────────────────────────────────
+   color-mix() lets us derive muted tints from Streamlit's own
+   --text-color, so every shade auto-flips between dark & light. */
+
 /* Nav container */
 [data-testid="stSidebarNav"] {
     padding-top: 0.25rem;
@@ -114,7 +118,7 @@ def render_sidebar() -> None:
 }
 /* Hover */
 [data-testid="stSidebarNavLink"]:hover {
-    background: rgba(255, 255, 255, 0.07);
+    background: color-mix(in srgb, var(--text-color) 7%, transparent);
     border-left: 3px solid rgba(49, 130, 206, 0.5);
 }
 /* Active / selected page */
@@ -134,7 +138,7 @@ def render_sidebar() -> None:
 [data-testid="stSlider"] label {
     font-size: 0.72rem !important;
     font-weight: 600 !important;
-    color: rgba(255,255,255,0.38) !important;
+    color: color-mix(in srgb, var(--text-color) 38%, transparent) !important;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     margin-bottom: 0.3rem !important;
@@ -149,7 +153,7 @@ def render_sidebar() -> None:
 /* Track background (unfilled) */
 [data-testid="stSlider"] [data-baseweb="slider"] > div:first-child > div:first-child {
     height: 3px !important;
-    background: rgba(255,255,255,0.08) !important;
+    background: color-mix(in srgb, var(--text-color) 12%, transparent) !important;
     border-radius: 3px !important;
 }
 /* Filled portion of track */
@@ -168,12 +172,10 @@ def render_sidebar() -> None:
     box-shadow:
         0 1px 5px rgba(0,0,0,0.35),
         0 0 0 3px rgba(49,130,206,0.15) !important;
-    /* box-shadow only — no transform, which causes the thumb to jump */
     transition: box-shadow 0.15s ease !important;
     cursor: grab !important;
     outline: none !important;
 }
-/* Hover: widen the outer glow ring, never move the element */
 [data-testid="stSlider"] [role="slider"]:hover {
     box-shadow:
         0 2px 10px rgba(0,0,0,0.4),
@@ -186,27 +188,26 @@ def render_sidebar() -> None:
         0 0 0 4px rgba(49,130,206,0.45) !important;
 }
 
-/* Value bubble — broad selectors to win against Streamlit's inline primaryColor */
+/* Value bubble — themed bg + text so it adapts to both modes */
 [data-testid="stThumbValue"],
 [data-testid="stThumbValue"] > div,
 [data-testid="stThumbValue"] span,
 [data-testid="stThumbValue"] * {
-    background: #0D1220 !important;
+    background: var(--secondary-background-color) !important;
     border: 1px solid rgba(49,130,206,0.4) !important;
     border-radius: 5px !important;
-    color: #ffffff !important;
+    color: var(--text-color) !important;
     font-size: 0.72rem !important;
     font-weight: 800 !important;
     letter-spacing: 0.03em !important;
     padding: 0.1rem 0.5rem !important;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.4) !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18) !important;
 }
-/* Fallback: BaseWeb tooltip element used in some Streamlit builds */
 [data-testid="stSlider"] [role="tooltip"],
 [data-testid="stSlider"] [role="tooltip"] * {
-    color: #ffffff !important;
+    color: var(--text-color) !important;
     font-weight: 800 !important;
-    background: #0D1220 !important;
+    background: var(--secondary-background-color) !important;
     border: 1px solid rgba(49,130,206,0.4) !important;
     border-radius: 5px !important;
     font-size: 0.72rem !important;
@@ -214,7 +215,7 @@ def render_sidebar() -> None:
 
 /* Min / max tick labels */
 [data-testid="stTickBar"] {
-    color: rgba(255,255,255,0.18) !important;
+    color: color-mix(in srgb, var(--text-color) 22%, transparent) !important;
     font-size: 0.65rem !important;
     padding-top: 0.3rem !important;
 }
@@ -223,10 +224,103 @@ def render_sidebar() -> None:
 [data-testid="stMainBlockContainer"] h2,
 [data-testid="stVerticalBlock"] h2 {
     font-weight: 800 !important;
-    color: rgba(255,255,255,0.95) !important;
+    color: var(--text-color) !important;
     letter-spacing: -0.015em !important;
     line-height: 1.2 !important;
 }
+
+/* ── Sidebar DB status card ────────────────────────────────── */
+.db-status-card {
+    background: var(--secondary-background-color);
+    border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent);
+    border-radius: 8px;
+    padding: 0.7rem 0.9rem;
+    margin: 0 0.1rem 0.6rem;
+    font-size: 0.82rem;
+}
+.db-status-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+}
+.db-status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+.db-status-name { font-weight: 600; color: var(--text-color); }
+.db-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.3rem;
+    text-align: center;
+}
+.db-stat-lbl {
+    color: color-mix(in srgb, var(--text-color) 45%, transparent);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.db-stat-val {
+    color: var(--text-color);
+    font-weight: 700;
+    font-size: 1rem;
+}
+.db-stat-val-sm { font-size: 0.82rem; margin-top: 0.1rem; }
+
+/* ── Plotly charts — theme-adaptive text & grid ──────────────────────────
+   Key insight: use fill/stroke with var(--text-color) + a SEPARATE opacity
+   property, NOT color-mix(... transparent). "transparent" in CSS is
+   rgba(0,0,0,0) — its color component is black — so mixing with it drags
+   every color towards dark/gray, breaking dark mode readability.
+   var(--text-color) is white in dark mode, near-black in light mode, and
+   updates correctly when the Streamlit theme toggle is used. ────────────── */
+
+/* Axis tick labels, axis titles, legend text, colorbar labels */
+.js-plotly-plot .xtick text,
+.js-plotly-plot .ytick text,
+.js-plotly-plot .legendtext,
+.js-plotly-plot .g-xtitle text,
+.js-plotly-plot .g-ytitle text,
+.js-plotly-plot .cbaxis text {
+    fill: var(--text-color) !important;
+    fill-opacity: 0.55 !important;
+}
+/* Bar chart percentage / value labels rendered outside bars */
+.js-plotly-plot .trace.bars text {
+    fill: var(--text-color) !important;
+    fill-opacity: 0.60 !important;
+}
+/* Pie / donut slice labels */
+.js-plotly-plot .pielayer text,
+.js-plotly-plot .trace.pie text {
+    fill: var(--text-color) !important;
+    fill-opacity: 0.65 !important;
+}
+/* Scatter / marker word labels */
+.js-plotly-plot .trace.scatter text {
+    fill: var(--text-color) !important;
+    fill-opacity: 0.50 !important;
+}
+/* Annotation text (e.g. donut centre percentage, vline labels) */
+.js-plotly-plot .annotation text,
+.js-plotly-plot .annotation-text text {
+    fill: var(--text-color) !important;
+    fill-opacity: 0.80 !important;
+}
+/* Grid lines */
+.js-plotly-plot .gridlayer path {
+    stroke: var(--text-color) !important;
+    stroke-opacity: 0.08 !important;
+}
+/* Zero / axis lines */
+.js-plotly-plot .zerolinelayer path {
+    stroke: var(--text-color) !important;
+    stroke-opacity: 0.12 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -283,33 +377,23 @@ def render_sidebar() -> None:
         status_txt  = "No database"
 
     st.sidebar.markdown(f"""
-<div style="
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    padding: 0.7rem 0.9rem;
-    margin: 0 0.1rem 0.6rem;
-    font-size: 0.82rem;
-">
-    <div style="display:flex; align-items:center; gap:0.4rem; margin-bottom:0.5rem;">
-        <span style="
-            width:8px; height:8px; border-radius:50%;
-            background:{dot_color}; display:inline-block; flex-shrink:0;
-        "></span>
-        <span style="font-weight:600; color:rgba(255,255,255,0.85);">{status_txt}</span>
+<div class="db-status-card">
+    <div class="db-status-row">
+        <span class="db-status-dot" style="background:{dot_color};"></span>
+        <span class="db-status-name">{status_txt}</span>
     </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.3rem; text-align:center;">
+    <div class="db-stats-grid">
         <div>
-            <div style="color:rgba(255,255,255,0.45); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em;">Vocab</div>
-            <div style="color:#fff; font-weight:700; font-size:1rem;">{vocab_count}</div>
+            <div class="db-stat-lbl">Vocab</div>
+            <div class="db-stat-val">{vocab_count}</div>
         </div>
         <div>
-            <div style="color:rgba(255,255,255,0.45); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em;">Attempts</div>
-            <div style="color:#fff; font-weight:700; font-size:1rem;">{attempt_count}</div>
+            <div class="db-stat-lbl">Attempts</div>
+            <div class="db-stat-val">{attempt_count}</div>
         </div>
         <div>
-            <div style="color:rgba(255,255,255,0.45); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em;">Last seen</div>
-            <div style="color:#fff; font-weight:700; font-size:0.82rem; margin-top:0.1rem;">{last_date}</div>
+            <div class="db-stat-lbl">Last seen</div>
+            <div class="db-stat-val db-stat-val-sm">{last_date}</div>
         </div>
     </div>
 </div>
@@ -337,3 +421,4 @@ def render_sidebar() -> None:
                 st.rerun()
             except Exception as e:
                 st.error(f"Error: {e}")
+

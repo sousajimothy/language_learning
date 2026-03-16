@@ -30,18 +30,18 @@ C_MUTED  = "rgba(255,255,255,0.25)"
 _BASE_LAYOUT = dict(
     paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(color="rgba(255,255,255,0.5)", family="Inter, system-ui, sans-serif", size=12),
+    font=dict(color="rgba(255,255,255,0.55)", family="Inter, system-ui, sans-serif", size=12),
     xaxis=dict(
-        gridcolor="rgba(255,255,255,0.05)",
+        gridcolor="rgba(255,255,255,0.07)",
         zeroline=False,
-        linecolor="rgba(255,255,255,0.07)",
-        tickfont=dict(size=11, color="rgba(255,255,255,0.4)"),
+        linecolor="rgba(255,255,255,0.10)",
+        tickfont=dict(size=11, color="rgba(255,255,255,0.45)"),
     ),
     yaxis=dict(
-        gridcolor="rgba(255,255,255,0.05)",
+        gridcolor="rgba(255,255,255,0.07)",
         zeroline=False,
-        linecolor="rgba(255,255,255,0.07)",
-        tickfont=dict(size=11, color="rgba(255,255,255,0.4)"),
+        linecolor="rgba(255,255,255,0.10)",
+        tickfont=dict(size=11, color="rgba(255,255,255,0.45)"),
     ),
     legend=dict(
         orientation="h",
@@ -54,7 +54,7 @@ _BASE_LAYOUT = dict(
     margin=dict(l=4, r=4, t=36, b=4),
     hoverlabel=dict(
         bgcolor="#1A202C",
-        bordercolor="rgba(255,255,255,0.12)",
+        bordercolor="rgba(255,255,255,0.15)",
         font=dict(color="rgba(255,255,255,0.85)", size=12),
     ),
 )
@@ -88,7 +88,7 @@ def _inject_css() -> None:
 .stats-title {
     font-size: 1.5rem;
     font-weight: 800;
-    color: rgba(255,255,255,0.92);
+    color: var(--text-color);
     letter-spacing: -0.01em;
 }
 .filter-pill {
@@ -99,7 +99,7 @@ def _inject_css() -> None:
     padding: 0.22rem 0.65rem;
     border-radius: 4px;
     background: rgba(49,130,206,0.1);
-    color: #63B3ED;
+    color: #3182CE;
     border: 1px solid rgba(49,130,206,0.2);
 }
 .section-lbl {
@@ -107,7 +107,7 @@ def _inject_css() -> None:
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.28);
+    color: color-mix(in srgb, var(--text-color) 28%, transparent);
     margin: 1.5rem 0 0.65rem;
     display: flex;
     align-items: center;
@@ -117,11 +117,11 @@ def _inject_css() -> None:
     content: '';
     flex: 1;
     height: 1px;
-    background: rgba(255,255,255,0.06);
+    background: color-mix(in srgb, var(--text-color) 6%, transparent);
 }
 .stat-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: var(--secondary-background-color);
+    border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent);
     border-radius: 10px;
     padding: 0.85rem 1rem;
     text-align: center;
@@ -129,7 +129,7 @@ def _inject_css() -> None:
 .stat-card .sc-num {
     font-size: 1.8rem;
     font-weight: 800;
-    color: #fff;
+    color: var(--text-color);
     line-height: 1;
 }
 .stat-card .sc-lbl {
@@ -137,12 +137,12 @@ def _inject_css() -> None:
     font-weight: 700;
     letter-spacing: 0.09em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
+    color: color-mix(in srgb, var(--text-color) 30%, transparent);
     margin-top: 0.28rem;
 }
 .stat-card .sc-sub {
     font-size: 0.7rem;
-    color: rgba(255,255,255,0.22);
+    color: color-mix(in srgb, var(--text-color) 22%, transparent);
     margin-top: 0.12rem;
 }
 </style>
@@ -253,7 +253,7 @@ _card(m3, fmt_rate(stats["accuracy"]),             "Accuracy",      "all correct
 _card(m4, fmt_rate(stats["near_miss_rate"]),       "Near-miss",     "close answers")
 
 st.markdown(
-    f'<div style="font-size:0.72rem;color:rgba(255,255,255,0.22);margin-top:0.4rem;'
+    f'<div style="font-size:0.72rem;color:color-mix(in srgb, var(--text-color) 22%, transparent);margin-top:0.4rem;'
     f'text-align:right;">Last practice: {fmt_ts(stats["last_seen"])}</div>',
     unsafe_allow_html=True,
 )
@@ -446,7 +446,7 @@ if rows_activity:
         x=week_labels,
         y=[day_labels[i] for i in pivot.index],
         colorscale=[
-            [0.0,   "#161B22"],
+            [0.0,   "rgba(0,0,0,0)"],
             [0.001, "#0D4A6B"],
             [0.25,  "#1A6FA0"],
             [0.55,  "#2D9BC8"],
@@ -462,16 +462,16 @@ if rows_activity:
     fig_heat.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="rgba(255,255,255,0.4)", size=11),
+        font=dict(color="rgba(255,255,255,0.45)", size=11),
         xaxis=dict(showticklabels=False, showgrid=False, zeroline=False),
         yaxis=dict(
             showgrid=False, zeroline=False,
-            tickfont=dict(size=11, color="rgba(255,255,255,0.45)"),
+            tickfont=dict(size=11, color="rgba(255,255,255,0.5)"),
             side="left",
         ),
         hoverlabel=dict(
             bgcolor="#1A202C",
-            bordercolor="rgba(255,255,255,0.12)",
+            bordercolor="rgba(255,255,255,0.15)",
             font=dict(color="rgba(255,255,255,0.85)", size=12),
         ),
         height=180,
@@ -525,7 +525,7 @@ with col_donut:
             values=[practiced, untouched],
             hole=0.68,
             marker=dict(
-                colors=[arc_color, "rgba(255,255,255,0.06)"],
+                colors=[arc_color, "rgba(120,120,130,0.30)"],
                 line=dict(color="rgba(0,0,0,0)", width=0),
             ),
             textinfo="none",
@@ -536,19 +536,19 @@ with col_donut:
         fig_donut.add_annotation(
             text=f"<b>{coverage_pct}%</b>",
             x=0.5, y=0.56,
-            font=dict(size=26, color="#fff"),
+            font=dict(size=26, color="#ffffff"),
             showarrow=False,
         )
         fig_donut.add_annotation(
             text="covered",
             x=0.5, y=0.40,
-            font=dict(size=11, color="rgba(255,255,255,0.35)"),
+            font=dict(size=11, color="rgba(255,255,255,0.5)"),
             showarrow=False,
         )
         fig_donut.add_annotation(
             text=f"{practiced} of {total} words",
             x=0.5, y=0.25,
-            font=dict(size=11, color="rgba(255,255,255,0.25)"),
+            font=dict(size=11, color="rgba(255,255,255,0.35)"),
             showarrow=False,
         )
         fig_donut.update_layout(
@@ -558,10 +558,10 @@ with col_donut:
                 orientation="h",
                 yanchor="top", y=-0.02,
                 xanchor="center", x=0.5,
-                font=dict(size=11, color="rgba(255,255,255,0.45)"),
+                font=dict(size=11, color="rgba(255,255,255,0.5)"),
                 bgcolor="rgba(0,0,0,0)",
             ),
-            hoverlabel=dict(bgcolor="#1A202C", bordercolor="rgba(255,255,255,0.12)",
+            hoverlabel=dict(bgcolor="#1A202C", bordercolor="rgba(255,255,255,0.15)",
                             font=dict(color="rgba(255,255,255,0.85)", size=12)),
             height=280,
             margin=dict(t=8, b=8, l=8, r=8),
@@ -682,7 +682,7 @@ with col_dist:
         ))
         st.plotly_chart(fig_dist, width="stretch")
         st.markdown(
-            '<div style="font-size:0.7rem;color:rgba(255,255,255,0.25);margin-top:-0.5rem;">'
+            '<div style="font-size:0.7rem;color:color-mix(in srgb, var(--text-color) 25%, transparent);margin-top:-0.5rem;">'
             'Words with ≥ 2 attempts, grouped by accuracy bucket.</div>',
             unsafe_allow_html=True,
         )
@@ -742,7 +742,7 @@ with col_lat:
         ))
         st.plotly_chart(fig_lat, width="stretch")
         st.markdown(
-            '<div style="font-size:0.7rem;color:rgba(255,255,255,0.25);margin-top:-0.5rem;">'
+            '<div style="font-size:0.7rem;color:color-mix(in srgb, var(--text-color) 25%, transparent);margin-top:-0.5rem;">'
             'Average time between receiving a question and submitting an answer.</div>',
             unsafe_allow_html=True,
         )
