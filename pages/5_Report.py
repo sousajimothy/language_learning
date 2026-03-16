@@ -243,7 +243,7 @@ if worst_rows:
             font=dict(color="rgba(255,255,255,0.85)", size=12),
         ),
     )
-    st.plotly_chart(fig, use_container_width=True, theme="streamlit")
+    st.plotly_chart(fig, width="stretch", theme="streamlit")
 
     # ── Table ─────────────────────────────────────────────────────────────────
     tbl = worst_df.rename(columns={
@@ -362,7 +362,7 @@ if missed_rows:
             font=dict(color="rgba(255,255,255,0.85)", size=12),
         ),
     )
-    st.plotly_chart(fig_scatter, use_container_width=True, theme="streamlit")
+    st.plotly_chart(fig_scatter, width="stretch", theme="streamlit")
     st.markdown(
         '<div style="font-size:0.7rem;color:color-mix(in srgb, var(--text-color) 22%, transparent);margin-top:-0.5rem;margin-bottom:0.75rem;">'
         'Bubble size ∝ total attempts. Words in the top-left corner are both frequently missed '

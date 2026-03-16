@@ -316,7 +316,7 @@ if rows_trend:
         xaxis=dict(title=""),
         height=280,
     ))
-    st.plotly_chart(fig_trend, use_container_width=True, theme="streamlit")
+    st.plotly_chart(fig_trend, width="stretch", theme="streamlit")
 else:
     st.info("No attempts in the selected window.")
 
@@ -380,7 +380,7 @@ if rows_drill:
         yaxis=dict(title="Questions"),
         height=280,
     ))
-    st.plotly_chart(fig_drill, use_container_width=True, theme="streamlit")
+    st.plotly_chart(fig_drill, width="stretch", theme="streamlit")
 
     # Compact summary table
     tbl = drill_df[["Drill type", "Attempts", "Correct", "Near-miss", "Wrong", "Acc %"]].copy()
@@ -458,7 +458,7 @@ if rows_activity:
         height=180,
         margin=dict(t=8, b=8, l=40, r=8),
     )
-    st.plotly_chart(fig_heat, use_container_width=True, theme="streamlit")
+    st.plotly_chart(fig_heat, width="stretch", theme="streamlit")
 else:
     st.info("No practice data yet.")
 
@@ -545,7 +545,7 @@ with col_donut:
             height=280,
             margin=dict(t=8, b=8, l=8, r=8),
         )
-        st.plotly_chart(fig_donut, use_container_width=True, theme="streamlit")
+        st.plotly_chart(fig_donut, width="stretch", theme="streamlit")
     else:
         st.info("No vocab items found for the selected source.")
 
@@ -596,7 +596,7 @@ with col_hard:
             height=280,
             margin=dict(l=4, r=48, t=8, b=4),
         ))
-        st.plotly_chart(fig_hard, use_container_width=True, theme="streamlit")
+        st.plotly_chart(fig_hard, width="stretch", theme="streamlit")
     else:
         st.info("Not enough practice data yet (need ≥ 2 attempts per item).")
 
@@ -659,7 +659,7 @@ with col_dist:
             bargap=0.15,
             height=280,
         ))
-        st.plotly_chart(fig_dist, use_container_width=True, theme="streamlit")
+        st.plotly_chart(fig_dist, width="stretch", theme="streamlit")
         st.markdown(
             '<div style="font-size:0.7rem;color:color-mix(in srgb, var(--text-color) 25%, transparent);margin-top:-0.5rem;">'
             'Words with ≥ 2 attempts, grouped by accuracy bucket.</div>',
@@ -719,7 +719,7 @@ with col_lat:
             height=280,
             margin=dict(l=4, r=48, t=8, b=4),
         ))
-        st.plotly_chart(fig_lat, use_container_width=True, theme="streamlit")
+        st.plotly_chart(fig_lat, width="stretch", theme="streamlit")
         st.markdown(
             '<div style="font-size:0.7rem;color:color-mix(in srgb, var(--text-color) 25%, transparent);margin-top:-0.5rem;">'
             'Average time between receiving a question and submitting an answer.</div>',
