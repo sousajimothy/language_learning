@@ -12,3 +12,6 @@ dependencies:
     - openai
     - python-dotenv
     - typer
+    - streamlit>=1.35
+    - plotly>=5.0
+    - watchdog
