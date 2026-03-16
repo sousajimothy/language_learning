@@ -1,0 +1,14 @@
+name: language_learning_env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pandas
+  - openpyxl
+  - ipykernel
+  - pip
+  - pip:
+    - openai
+    - python-dotenv
+    - typer

@@ -1,0 +1,9 @@
+id,de,de_mit_artikel,en,af,notes,source,pack_source,acc_window,attempts_window,near_miss_window,last_seen,miss_count,total_attempts,acc_alltime
+20,Das Sofa ist bequem. Das Zimmer ist gemütlich. Und ich fühle mich wohl!,Das Sofa ist bequem. Das Zimmer ist gemütlich. Und ich fühle mich wohl!,The sofa is comfortable. The room is cozy. And I feel good!,Die sofa is gemaklik. Die kamer is gesellig. En ek voel goed!,Aussage/Satz,pipeline:teams_sample_01,worst,0.0000,1,0,2026-03-01T15:06:05+00:00,,,
+14,Die Börse,die Börse,The stock exchange,Die beurs,"Substantiv, Femininum",pipeline:teams_sample_01,worst,0.0000,1,0,2026-03-01T15:06:39+00:00,,,
+21,Nicht-fiktionales Texten,Nicht-fiktionales Texten,Non-fiction text creation,Nie-fiksionele teks skep,Verbphrase,pipeline:teams_sample_01,worst,0.0000,1,0,2026-03-01T15:07:12+00:00,,,
+1,Das Gefängnis,das Gefängnis,The prison,Die tronk,"Substantiv, Neutrum",pipeline:teams_sample_01,both,0.0000,3,1,2026-03-01T16:51:04+00:00,3,3,0.0000
+2,Die Abrechnung,die Abrechnung,The settlement/billing,Die afrekening,"Substantiv, Femininum",pipeline:teams_sample_01,both,0.0000,3,1,2026-03-01T16:51:04+00:00,3,3,0.0000
+3,Sich verabschieden,Sich verabschieden,To say goodbye,Afskeid neem,Reflexives Verb,pipeline:teams_sample_01,missed,,,,,3,3,0.0000
+4,Unangenehm,Unangenehm,Unpleasant,Onaangenaam,Adjektiv,pipeline:teams_sample_01,missed,,,,,3,3,0.0000
+5,nebenbei,nebenbei,Incidentally/Besides,Terloops,Adverb,pipeline:teams_sample_01,missed,,,,,3,3,0.0000
