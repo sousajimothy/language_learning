@@ -76,7 +76,7 @@ def home_page() -> None:
 }
 /* ── Stat cards ───────────────────────────────────────────────────── */
 .stat-card {
-    background: rgba(128,128,128,0.10);
+    background: var(--secondary-background-color);
     border: 1.5px solid rgba(128,128,128,0.40);
     border-radius: 10px;
     padding: 0.9rem 1rem 0.75rem;
