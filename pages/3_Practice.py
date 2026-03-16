@@ -240,6 +240,35 @@ div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
     color: rgba(255,255,255,0.3);
     margin-top: 0.25rem;
 }
+
+/* ── Light mode overrides ─────────────────────────────────── */
+[data-theme="light"] .phase-badge {
+    color: #2B6CB0;
+    background: rgba(49,130,206,0.08);
+    border-color: rgba(49,130,206,0.25);
+}
+[data-theme="light"] .section-lbl { color: rgba(0,0,0,0.4); }
+[data-theme="light"] .section-lbl::after { background: rgba(0,0,0,0.08); }
+[data-theme="light"] .progress-meta { color: rgba(0,0,0,0.45); }
+[data-theme="light"] .question-prompt { color: rgba(0,0,0,0.85); }
+[data-theme="light"] div[data-testid="stRadio"] > label {
+    color: rgba(0,0,0,0.45);
+}
+[data-theme="light"] div[data-testid="stRadio"] div[role="radiogroup"] label {
+    border-color: rgba(0,0,0,0.1);
+    background: rgba(0,0,0,0.02);
+    color: rgba(0,0,0,0.78);
+}
+[data-theme="light"] div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
+    background: rgba(49,130,206,0.06);
+    border-color: rgba(49,130,206,0.3);
+}
+[data-theme="light"] .stat-card-sm {
+    background: rgba(0,0,0,0.03);
+    border-color: rgba(0,0,0,0.08);
+}
+[data-theme="light"] .stat-card-sm .sc-num { color: rgba(0,0,0,0.85); }
+[data-theme="light"] .stat-card-sm .sc-lbl { color: rgba(0,0,0,0.45); }
 </style>
 """, unsafe_allow_html=True)
 

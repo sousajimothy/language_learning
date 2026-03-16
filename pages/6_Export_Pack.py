@@ -36,7 +36,7 @@ st.markdown("""
 }
 .pack-subtitle {
     font-size: 0.8rem;
-    color: rgba(255,255,255,0.32);
+    color: rgba(255,255,255,0.42);
     margin-top: 0.25rem;
     line-height: 1.45;
 }
@@ -125,6 +125,17 @@ st.markdown("""
     padding: 0.18rem 0.6rem;
     border-radius: 4px;
 }
+
+/* ── Light mode overrides ─────────────────────────────────────── */
+[data-theme="light"] .section-lbl { color: rgba(0,0,0,0.4); }
+[data-theme="light"] .section-lbl::after { background: rgba(0,0,0,0.08); }
+[data-theme="light"] .mini-card {
+    background: rgba(0,0,0,0.03);
+    border-color: rgba(0,0,0,0.08);
+}
+[data-theme="light"] .mini-card .mc-num { color: rgba(0,0,0,0.85); }
+[data-theme="light"] .mini-card .mc-lbl { color: rgba(0,0,0,0.45); }
+[data-theme="light"] .pack-subtitle { color: rgba(0,0,0,0.5) !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -144,7 +155,7 @@ if not Path(db_path).exists():
 
 st.markdown("## 📦 Export Pack")
 st.markdown(
-    '<p style="color:rgba(255,255,255,0.42);margin-top:-0.4rem;font-size:0.9rem;">'
+    '<p class="pack-subtitle" style="margin-top:-0.4rem;font-size:0.9rem;">'
     'Build a focused Anki study deck from your weakest vocabulary items — '
     'combines the worst-performing items (by window accuracy) with the most-missed items (all-time).'
     '</p>',

@@ -97,6 +97,10 @@ def render_sidebar() -> None:
     # ── Global CSS ──────────────────────────────────────────────────────────
     st.markdown("""
 <style>
+/* ── Primary accent — replaces config.toml primaryColor so the native
+   theme toggle (⋮ menu) stays visible. ──────────────────────────── */
+:root { --primary-color: #3182CE !important; }
+
 /* Nav container */
 [data-testid="stSidebarNav"] {
     padding-top: 0.25rem;
@@ -223,9 +227,130 @@ def render_sidebar() -> None:
 [data-testid="stMainBlockContainer"] h2,
 [data-testid="stVerticalBlock"] h2 {
     font-weight: 800 !important;
-    color: rgba(255,255,255,0.95) !important;
+    color: var(--text-color, rgba(255,255,255,0.95)) !important;
     letter-spacing: -0.015em !important;
     line-height: 1.2 !important;
+}
+
+/* ── Sidebar DB status card ────────────────────────────────── */
+.db-status-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 0.7rem 0.9rem;
+    margin: 0 0.1rem 0.6rem;
+    font-size: 0.82rem;
+}
+.db-status-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+}
+.db-status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+.db-status-name { font-weight: 600; color: rgba(255,255,255,0.85); }
+.db-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.3rem;
+    text-align: center;
+}
+.db-stat-lbl {
+    color: rgba(255,255,255,0.45);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.db-stat-val {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+}
+.db-stat-val-sm { font-size: 0.82rem; margin-top: 0.1rem; }
+
+/* ══════════════════════════════════════════════════════════════
+   LIGHT MODE OVERRIDES
+   Streamlit sets [data-theme="light"] on <html> when the user
+   switches via the ⋮ → Settings menu.
+   ══════════════════════════════════════════════════════════════ */
+
+/* Nav links */
+[data-theme="light"] [data-testid="stSidebarNavLink"]:hover {
+    background: rgba(0,0,0,0.05);
+    border-left: 3px solid rgba(49,130,206,0.5);
+}
+[data-theme="light"] [data-testid="stSidebarNavLink"][aria-selected="true"] {
+    background: rgba(49,130,206,0.14);
+}
+
+/* Sidebar DB status card */
+[data-theme="light"] .db-status-card {
+    background: rgba(0,0,0,0.03);
+    border-color: rgba(0,0,0,0.1);
+}
+[data-theme="light"] .db-status-name { color: rgba(0,0,0,0.75); }
+[data-theme="light"] .db-stat-lbl    { color: rgba(0,0,0,0.45); }
+[data-theme="light"] .db-stat-val    { color: rgba(0,0,0,0.85); }
+
+/* Slider label */
+[data-theme="light"] [data-testid="stSlider"] label {
+    color: rgba(0,0,0,0.5) !important;
+}
+
+/* Slider track filled portion — keep blue */
+[data-theme="light"] [data-testid="stSlider"] [data-baseweb="slider"] > div:first-child > div:first-child > div {
+    background: #3182CE !important;
+}
+
+/* Thumb */
+[data-theme="light"] [data-testid="stSlider"] [role="slider"] {
+    border-color: #3182CE !important;
+}
+
+/* Value bubble */
+[data-theme="light"] [data-testid="stThumbValue"],
+[data-theme="light"] [data-testid="stThumbValue"] > div,
+[data-theme="light"] [data-testid="stThumbValue"] span,
+[data-theme="light"] [data-testid="stThumbValue"] * {
+    background: #EBF4FF !important;
+    color: #2B6CB0 !important;
+    border-color: rgba(49,130,206,0.45) !important;
+}
+[data-theme="light"] [data-testid="stSlider"] [role="tooltip"],
+[data-theme="light"] [data-testid="stSlider"] [role="tooltip"] * {
+    background: #EBF4FF !important;
+    color: #2B6CB0 !important;
+}
+
+/* Tick bar */
+[data-theme="light"] [data-testid="stTickBar"] {
+    color: rgba(0,0,0,0.3) !important;
+}
+
+/* ── Plotly charts — light mode text & grid ──────────────────── */
+/* Streamlit renders Plotly inline (not iframed) so CSS reaches SVG */
+[data-theme="light"] .js-plotly-plot .xtick text,
+[data-theme="light"] .js-plotly-plot .ytick text,
+[data-theme="light"] .js-plotly-plot .legendtext,
+[data-theme="light"] .js-plotly-plot .g-xtitle text,
+[data-theme="light"] .js-plotly-plot .g-ytitle text,
+[data-theme="light"] .js-plotly-plot .annotation-text text,
+[data-theme="light"] .js-plotly-plot .cbaxis text {
+    fill: rgba(50,50,50,0.72) !important;
+}
+[data-theme="light"] .js-plotly-plot .gridlayer path {
+    stroke: rgba(0,0,0,0.07) !important;
+}
+[data-theme="light"] .js-plotly-plot .zerolinelayer path {
+    stroke: rgba(0,0,0,0.12) !important;
+}
+[data-theme="light"] .js-plotly-plot .bg {
+    fill: rgba(0,0,0,0.02) !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -283,33 +408,23 @@ def render_sidebar() -> None:
         status_txt  = "No database"
 
     st.sidebar.markdown(f"""
-<div style="
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    padding: 0.7rem 0.9rem;
-    margin: 0 0.1rem 0.6rem;
-    font-size: 0.82rem;
-">
-    <div style="display:flex; align-items:center; gap:0.4rem; margin-bottom:0.5rem;">
-        <span style="
-            width:8px; height:8px; border-radius:50%;
-            background:{dot_color}; display:inline-block; flex-shrink:0;
-        "></span>
-        <span style="font-weight:600; color:rgba(255,255,255,0.85);">{status_txt}</span>
+<div class="db-status-card">
+    <div class="db-status-row">
+        <span class="db-status-dot" style="background:{dot_color};"></span>
+        <span class="db-status-name">{status_txt}</span>
     </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.3rem; text-align:center;">
+    <div class="db-stats-grid">
         <div>
-            <div style="color:rgba(255,255,255,0.45); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em;">Vocab</div>
-            <div style="color:#fff; font-weight:700; font-size:1rem;">{vocab_count}</div>
+            <div class="db-stat-lbl">Vocab</div>
+            <div class="db-stat-val">{vocab_count}</div>
         </div>
         <div>
-            <div style="color:rgba(255,255,255,0.45); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em;">Attempts</div>
-            <div style="color:#fff; font-weight:700; font-size:1rem;">{attempt_count}</div>
+            <div class="db-stat-lbl">Attempts</div>
+            <div class="db-stat-val">{attempt_count}</div>
         </div>
         <div>
-            <div style="color:rgba(255,255,255,0.45); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em;">Last seen</div>
-            <div style="color:#fff; font-weight:700; font-size:0.82rem; margin-top:0.1rem;">{last_date}</div>
+            <div class="db-stat-lbl">Last seen</div>
+            <div class="db-stat-val db-stat-val-sm">{last_date}</div>
         </div>
     </div>
 </div>
@@ -337,3 +452,4 @@ def render_sidebar() -> None:
                 st.rerun()
             except Exception as e:
                 st.error(f"Error: {e}")
+

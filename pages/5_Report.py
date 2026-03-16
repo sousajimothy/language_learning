@@ -91,6 +91,22 @@ st.markdown("""
     justify-content: flex-end;
     margin-top: 0.4rem;
 }
+
+/* ── Light mode overrides ─────────────────────────────────── */
+[data-theme="light"] .filter-pill {
+    color: #2B6CB0;
+    background: rgba(49,130,206,0.08);
+    border-color: rgba(49,130,206,0.25);
+}
+[data-theme="light"] .section-lbl { color: rgba(0,0,0,0.4); }
+[data-theme="light"] .section-lbl::after { background: rgba(0,0,0,0.08); }
+[data-theme="light"] .stat-card {
+    background: rgba(0,0,0,0.03);
+    border-color: rgba(0,0,0,0.08);
+}
+[data-theme="light"] .stat-card .sc-num { color: rgba(0,0,0,0.85); }
+[data-theme="light"] .stat-card .sc-lbl { color: rgba(0,0,0,0.45); }
+[data-theme="light"] .stat-card .sc-sub { color: rgba(0,0,0,0.4); }
 </style>
 """, unsafe_allow_html=True)
 

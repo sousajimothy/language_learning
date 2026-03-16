@@ -192,6 +192,27 @@ def home_page() -> None:
     line-height: 1.45;
     min-height: 2.5rem;
 }
+
+/* ── Light mode overrides ──────────────────────────────────────────── */
+[data-theme="light"] .stat-card {
+    background: rgba(0,0,0,0.03);
+    border-color: rgba(0,0,0,0.08);
+}
+[data-theme="light"] .stat-card .sc-num { color: rgba(0,0,0,0.85); }
+[data-theme="light"] .stat-card .sc-lbl { color: rgba(0,0,0,0.4); }
+[data-theme="light"] .stat-card .sc-sub { color: rgba(0,0,0,0.35); }
+[data-theme="light"] .step:not(:last-child)::after { background: rgba(0,0,0,0.1); }
+[data-theme="light"] .step-circle {
+    border-color: rgba(0,0,0,0.15);
+    color: rgba(0,0,0,0.45);
+    background: rgba(0,0,0,0.03);
+}
+[data-theme="light"] .step-text { color: rgba(0,0,0,0.45); }
+[data-theme="light"] .step-text.active { color: #2B6CB0; }
+[data-theme="light"] .section-lbl { color: rgba(0,0,0,0.4); }
+[data-theme="light"] .section-lbl::after { background: rgba(0,0,0,0.08); }
+[data-theme="light"] .nav-card-title { color: rgba(0,0,0,0.85); }
+[data-theme="light"] .nav-card-desc  { color: rgba(0,0,0,0.5); }
 </style>
 """, unsafe_allow_html=True)
 
