@@ -2,6 +2,13 @@
 
 See [CLAUDE.md](CLAUDE.md) for environment setup and the core workflow overview.
 
+## Caching
+
+The export pipeline includes automatic cache validation to improve performance. Cached `.xlsx` files older than 24 hours are treated as stale and will trigger a fresh OpenAI API call. Use the cache management utilities in `src/cache_utils.py` to:
+
+- **Check cache age**: `is_cache_valid(file_path)` — Returns `True` if the cache is still fresh
+- **Clear old caches**: `clear_old_cache(directory)` — Removes files older than 72 hours (configurable)
+
 ---
 
 ## Golden outputs (regression baseline)
