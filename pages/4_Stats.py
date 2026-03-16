@@ -147,6 +147,7 @@ def _inject_css() -> None:
 }
 
 /* ── Light mode overrides ─────────────────────────────────── */
+[data-theme="light"] .stats-title { color: rgba(0,0,0,0.85); }
 [data-theme="light"] .filter-pill {
     color: #2B6CB0;
     background: rgba(49,130,206,0.08);

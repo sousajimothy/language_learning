@@ -1,0 +1,10 @@
+# Customise the built-in Light & Dark themes without hiding the native
+# Light / Dark / System toggle next to Deploy.
+# NOTE: only [theme.light] and [theme.dark] are used — a top-level [theme]
+# section with any colour key would create a "Custom Theme" and hide the toggle.
+
+[theme.light]
+primaryColor = "#3182CE"
+
+[theme.dark]
+primaryColor = "#3182CE"

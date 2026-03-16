@@ -97,10 +97,6 @@ def render_sidebar() -> None:
     # ── Global CSS ──────────────────────────────────────────────────────────
     st.markdown("""
 <style>
-/* ── Primary accent — replaces config.toml primaryColor so the native
-   theme toggle (⋮ menu) stays visible. ──────────────────────────── */
-:root { --primary-color: #3182CE !important; }
-
 /* Nav container */
 [data-testid="stSidebarNav"] {
     padding-top: 0.25rem;
@@ -279,6 +275,12 @@ def render_sidebar() -> None:
    switches via the ⋮ → Settings menu.
    ══════════════════════════════════════════════════════════════ */
 
+/* Page titles — force dark text in light mode (var(--text-color) fallback is white) */
+[data-theme="light"] [data-testid="stMainBlockContainer"] h2,
+[data-theme="light"] [data-testid="stVerticalBlock"] h2 {
+    color: rgba(0,0,0,0.85) !important;
+}
+
 /* Nav links */
 [data-theme="light"] [data-testid="stSidebarNavLink"]:hover {
     background: rgba(0,0,0,0.05);
@@ -302,6 +304,10 @@ def render_sidebar() -> None:
     color: rgba(0,0,0,0.5) !important;
 }
 
+/* Slider track background (unfilled) — visible on white */
+[data-theme="light"] [data-testid="stSlider"] [data-baseweb="slider"] > div:first-child > div:first-child {
+    background: rgba(0,0,0,0.12) !important;
+}
 /* Slider track filled portion — keep blue */
 [data-theme="light"] [data-testid="stSlider"] [data-baseweb="slider"] > div:first-child > div:first-child > div {
     background: #3182CE !important;

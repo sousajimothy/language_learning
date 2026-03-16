@@ -127,6 +127,7 @@ st.markdown("""
 }
 
 /* ── Light mode overrides ─────────────────────────────────────── */
+[data-theme="light"] .pack-title { color: rgba(0,0,0,0.85); }
 [data-theme="light"] .section-lbl { color: rgba(0,0,0,0.4); }
 [data-theme="light"] .section-lbl::after { background: rgba(0,0,0,0.08); }
 [data-theme="light"] .mini-card {
