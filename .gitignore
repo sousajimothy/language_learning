@@ -1,0 +1,49 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# ── Virtual environments ───────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+.env/
+# (but keep .env dotfile for secrets — listed separately below)
+
+# ── Secrets & config ──────────────────────────────────────────────────────────
+.env
+
+# ── Generated output (exports, databases) ─────────────────────────────────────
+# Timestamped exports produced by the pipeline
+output/*_anki_vocab_export.tsv
+output/*_full_vocab_export.xlsx
+output/study_pack_*.tsv
+output/study_pack_*.csv
+output/german.db
+
+# Large pre-downloaded Anki deck files
+output/anki_decks/*.apkg
+
+# ── Manually curated files — KEEP tracked ─────────────────────────────────────
+!output/add/
+!output/golden/
+
+# ── Streamlit cache ───────────────────────────────────────────────────────────
+.streamlit/*.log
+
+# ── Jupyter ───────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+
+# ── OS / editor ───────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# ── Misc artefacts ────────────────────────────────────────────────────────────
+5.0
