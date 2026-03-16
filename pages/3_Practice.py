@@ -63,7 +63,7 @@ def _inject_css() -> None:
 .practice-title {
     font-size: 1.5rem;
     font-weight: 800;
-    color: rgba(255,255,255,0.92);
+    color: var(--text-color);
     letter-spacing: -0.01em;
 }
 .phase-badge {
@@ -74,7 +74,7 @@ def _inject_css() -> None:
     padding: 0.22rem 0.6rem;
     border-radius: 4px;
     background: rgba(49,130,206,0.12);
-    color: #63B3ED;
+    color: #3182CE;
     border: 1px solid rgba(49,130,206,0.22);
 }
 
@@ -84,7 +84,7 @@ def _inject_css() -> None:
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.28);
+    color: color-mix(in srgb, var(--text-color) 28%, transparent);
     margin: 1.1rem 0 0.55rem;
     display: flex;
     align-items: center;
@@ -94,7 +94,7 @@ def _inject_css() -> None:
     content: '';
     flex: 1;
     height: 1px;
-    background: rgba(255,255,255,0.06);
+    background: color-mix(in srgb, var(--text-color) 6%, transparent);
 }
 
 /* ── Progress row ─────────────────────────────────────────── */
@@ -103,7 +103,7 @@ def _inject_css() -> None:
     justify-content: space-between;
     align-items: center;
     font-size: 0.78rem;
-    color: rgba(255,255,255,0.35);
+    color: color-mix(in srgb, var(--text-color) 35%, transparent);
     margin-bottom: 0.4rem;
 }
 .score-pill {
@@ -131,7 +131,7 @@ def _inject_css() -> None:
 .question-prompt {
     font-size: 1.35rem;
     font-weight: 700;
-    color: rgba(255,255,255,0.92);
+    color: var(--text-color);
     line-height: 1.45;
     margin-bottom: 1.6rem;
     padding: 0.25rem 0;
@@ -141,7 +141,7 @@ def _inject_css() -> None:
 div[data-testid="stRadio"] > label {
     font-size: 0.7rem;
     font-weight: 700;
-    color: rgba(255,255,255,0.35);
+    color: color-mix(in srgb, var(--text-color) 35%, transparent);
     letter-spacing: 0.09em;
     text-transform: uppercase;
     margin-bottom: 0.2rem;
@@ -152,12 +152,12 @@ div[data-testid="stRadio"] div[role="radiogroup"] label {
     padding: 0.7rem 1rem;
     margin: 0.25rem 0;
     border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.09);
-    background: rgba(255,255,255,0.025);
+    border: 1px solid color-mix(in srgb, var(--text-color) 9%, transparent);
+    background: color-mix(in srgb, var(--text-color) 3%, transparent);
     cursor: pointer;
     transition: background 0.12s, border-color 0.12s;
     font-size: 0.92rem;
-    color: rgba(255,255,255,0.78);
+    color: color-mix(in srgb, var(--text-color) 78%, transparent);
 }
 div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
     background: rgba(49,130,206,0.08);
@@ -220,8 +220,8 @@ div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
 
 /* ── Stat card (summary row) ──────────────────────────────── */
 .stat-card-sm {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.09);
+    background: color-mix(in srgb, var(--text-color) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--text-color) 9%, transparent);
     border-radius: 8px;
     padding: 0.8rem 1rem;
     text-align: center;
@@ -229,7 +229,7 @@ div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
 .stat-card-sm .sc-num {
     font-size: 1.7rem;
     font-weight: 800;
-    color: #fff;
+    color: var(--text-color);
     line-height: 1;
 }
 .stat-card-sm .sc-lbl {
@@ -237,39 +237,9 @@ div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
     font-weight: 700;
     letter-spacing: 0.09em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
+    color: color-mix(in srgb, var(--text-color) 30%, transparent);
     margin-top: 0.25rem;
 }
-
-/* ── Light mode overrides ─────────────────────────────────── */
-[data-theme="light"] .practice-title { color: rgba(0,0,0,0.85); }
-[data-theme="light"] .phase-badge {
-    color: #2B6CB0;
-    background: rgba(49,130,206,0.08);
-    border-color: rgba(49,130,206,0.25);
-}
-[data-theme="light"] .section-lbl { color: rgba(0,0,0,0.4); }
-[data-theme="light"] .section-lbl::after { background: rgba(0,0,0,0.08); }
-[data-theme="light"] .progress-meta { color: rgba(0,0,0,0.45); }
-[data-theme="light"] .question-prompt { color: rgba(0,0,0,0.85); }
-[data-theme="light"] div[data-testid="stRadio"] > label {
-    color: rgba(0,0,0,0.45);
-}
-[data-theme="light"] div[data-testid="stRadio"] div[role="radiogroup"] label {
-    border-color: rgba(0,0,0,0.1);
-    background: rgba(0,0,0,0.02);
-    color: rgba(0,0,0,0.78);
-}
-[data-theme="light"] div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
-    background: rgba(49,130,206,0.06);
-    border-color: rgba(49,130,206,0.3);
-}
-[data-theme="light"] .stat-card-sm {
-    background: rgba(0,0,0,0.03);
-    border-color: rgba(0,0,0,0.08);
-}
-[data-theme="light"] .stat-card-sm .sc-num { color: rgba(0,0,0,0.85); }
-[data-theme="light"] .stat-card-sm .sc-lbl { color: rgba(0,0,0,0.45); }
 </style>
 """, unsafe_allow_html=True)
 

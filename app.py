@@ -76,8 +76,8 @@ def home_page() -> None:
 }
 /* ── Stat cards ───────────────────────────────────────────────────── */
 .stat-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: color-mix(in srgb, var(--text-color) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent);
     border-radius: 10px;
     padding: 0.9rem 1rem 0.75rem;
     text-align: center;
@@ -86,19 +86,19 @@ def home_page() -> None:
     font-size: 2rem;
     font-weight: 800;
     line-height: 1;
-    color: #fff;
+    color: var(--text-color);
 }
 .stat-card .sc-lbl {
     font-size: 0.65rem;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.38);
+    color: color-mix(in srgb, var(--text-color) 38%, transparent);
     margin-top: 0.3rem;
 }
 .stat-card .sc-sub {
     font-size: 0.72rem;
-    color: rgba(255,255,255,0.3);
+    color: color-mix(in srgb, var(--text-color) 30%, transparent);
     margin-top: 0.15rem;
 }
 /* ── Workflow stepper ─────────────────────────────────────────────── */
@@ -122,7 +122,7 @@ def home_page() -> None:
     left: calc(50% + 14px);
     right: calc(-50% + 14px);
     height: 2px;
-    background: rgba(255,255,255,0.1);
+    background: color-mix(in srgb, var(--text-color) 10%, transparent);
 }
 .step:not(:last-child).step-done::after {
     background: rgba(72,187,120,0.5);
@@ -135,9 +135,9 @@ def home_page() -> None:
     justify-content: center;
     font-size: 0.75rem;
     font-weight: 700;
-    border: 2px solid rgba(255,255,255,0.15);
-    color: rgba(255,255,255,0.35);
-    background: rgba(255,255,255,0.04);
+    border: 2px solid color-mix(in srgb, var(--text-color) 15%, transparent);
+    color: color-mix(in srgb, var(--text-color) 35%, transparent);
+    background: color-mix(in srgb, var(--text-color) 4%, transparent);
     flex-shrink: 0;
     z-index: 1;
 }
@@ -153,7 +153,7 @@ def home_page() -> None:
 }
 .step-text {
     font-size: 0.7rem;
-    color: rgba(255,255,255,0.35);
+    color: color-mix(in srgb, var(--text-color) 35%, transparent);
     margin-top: 0.4rem;
     text-align: center;
     line-height: 1.3;
@@ -166,7 +166,7 @@ def home_page() -> None:
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
+    color: color-mix(in srgb, var(--text-color) 30%, transparent);
     margin: 1.5rem 0 0.75rem;
     display: flex;
     align-items: center;
@@ -176,43 +176,22 @@ def home_page() -> None:
     content: '';
     flex: 1;
     height: 1px;
-    background: rgba(255,255,255,0.07);
+    background: color-mix(in srgb, var(--text-color) 7%, transparent);
 }
 /* ── Nav cards ────────────────────────────────────────────────────── */
 .nav-card-icon { font-size: 1.6rem; line-height: 1; margin-bottom: 0.4rem; }
 .nav-card-title {
     font-size: 0.95rem;
     font-weight: 700;
-    color: rgba(255,255,255,0.9);
+    color: var(--text-color);
     margin-bottom: 0.25rem;
 }
 .nav-card-desc {
     font-size: 0.77rem;
-    color: rgba(255,255,255,0.38);
+    color: color-mix(in srgb, var(--text-color) 38%, transparent);
     line-height: 1.45;
     min-height: 2.5rem;
 }
-
-/* ── Light mode overrides ──────────────────────────────────────────── */
-[data-theme="light"] .stat-card {
-    background: rgba(0,0,0,0.03);
-    border-color: rgba(0,0,0,0.08);
-}
-[data-theme="light"] .stat-card .sc-num { color: rgba(0,0,0,0.85); }
-[data-theme="light"] .stat-card .sc-lbl { color: rgba(0,0,0,0.4); }
-[data-theme="light"] .stat-card .sc-sub { color: rgba(0,0,0,0.35); }
-[data-theme="light"] .step:not(:last-child)::after { background: rgba(0,0,0,0.1); }
-[data-theme="light"] .step-circle {
-    border-color: rgba(0,0,0,0.15);
-    color: rgba(0,0,0,0.45);
-    background: rgba(0,0,0,0.03);
-}
-[data-theme="light"] .step-text { color: rgba(0,0,0,0.45); }
-[data-theme="light"] .step-text.active { color: #2B6CB0; }
-[data-theme="light"] .section-lbl { color: rgba(0,0,0,0.4); }
-[data-theme="light"] .section-lbl::after { background: rgba(0,0,0,0.08); }
-[data-theme="light"] .nav-card-title { color: rgba(0,0,0,0.85); }
-[data-theme="light"] .nav-card-desc  { color: rgba(0,0,0,0.5); }
 </style>
 """, unsafe_allow_html=True)
 

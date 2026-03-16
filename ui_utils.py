@@ -97,6 +97,10 @@ def render_sidebar() -> None:
     # ── Global CSS ──────────────────────────────────────────────────────────
     st.markdown("""
 <style>
+/* ── Theme-adaptive shorthand ──────────────────────────────────
+   color-mix() lets us derive muted tints from Streamlit's own
+   --text-color, so every shade auto-flips between dark & light. */
+
 /* Nav container */
 [data-testid="stSidebarNav"] {
     padding-top: 0.25rem;
@@ -114,7 +118,7 @@ def render_sidebar() -> None:
 }
 /* Hover */
 [data-testid="stSidebarNavLink"]:hover {
-    background: rgba(255, 255, 255, 0.07);
+    background: color-mix(in srgb, var(--text-color) 7%, transparent);
     border-left: 3px solid rgba(49, 130, 206, 0.5);
 }
 /* Active / selected page */
@@ -134,7 +138,7 @@ def render_sidebar() -> None:
 [data-testid="stSlider"] label {
     font-size: 0.72rem !important;
     font-weight: 600 !important;
-    color: rgba(255,255,255,0.38) !important;
+    color: color-mix(in srgb, var(--text-color) 38%, transparent) !important;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     margin-bottom: 0.3rem !important;
@@ -149,7 +153,7 @@ def render_sidebar() -> None:
 /* Track background (unfilled) */
 [data-testid="stSlider"] [data-baseweb="slider"] > div:first-child > div:first-child {
     height: 3px !important;
-    background: rgba(255,255,255,0.08) !important;
+    background: color-mix(in srgb, var(--text-color) 12%, transparent) !important;
     border-radius: 3px !important;
 }
 /* Filled portion of track */
@@ -168,12 +172,10 @@ def render_sidebar() -> None:
     box-shadow:
         0 1px 5px rgba(0,0,0,0.35),
         0 0 0 3px rgba(49,130,206,0.15) !important;
-    /* box-shadow only — no transform, which causes the thumb to jump */
     transition: box-shadow 0.15s ease !important;
     cursor: grab !important;
     outline: none !important;
 }
-/* Hover: widen the outer glow ring, never move the element */
 [data-testid="stSlider"] [role="slider"]:hover {
     box-shadow:
         0 2px 10px rgba(0,0,0,0.4),
@@ -186,27 +188,26 @@ def render_sidebar() -> None:
         0 0 0 4px rgba(49,130,206,0.45) !important;
 }
 
-/* Value bubble — broad selectors to win against Streamlit's inline primaryColor */
+/* Value bubble — themed bg + text so it adapts to both modes */
 [data-testid="stThumbValue"],
 [data-testid="stThumbValue"] > div,
 [data-testid="stThumbValue"] span,
 [data-testid="stThumbValue"] * {
-    background: #0D1220 !important;
+    background: var(--secondary-background-color) !important;
     border: 1px solid rgba(49,130,206,0.4) !important;
     border-radius: 5px !important;
-    color: #ffffff !important;
+    color: var(--text-color) !important;
     font-size: 0.72rem !important;
     font-weight: 800 !important;
     letter-spacing: 0.03em !important;
     padding: 0.1rem 0.5rem !important;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.4) !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18) !important;
 }
-/* Fallback: BaseWeb tooltip element used in some Streamlit builds */
 [data-testid="stSlider"] [role="tooltip"],
 [data-testid="stSlider"] [role="tooltip"] * {
-    color: #ffffff !important;
+    color: var(--text-color) !important;
     font-weight: 800 !important;
-    background: #0D1220 !important;
+    background: var(--secondary-background-color) !important;
     border: 1px solid rgba(49,130,206,0.4) !important;
     border-radius: 5px !important;
     font-size: 0.72rem !important;
@@ -214,7 +215,7 @@ def render_sidebar() -> None:
 
 /* Min / max tick labels */
 [data-testid="stTickBar"] {
-    color: rgba(255,255,255,0.18) !important;
+    color: color-mix(in srgb, var(--text-color) 22%, transparent) !important;
     font-size: 0.65rem !important;
     padding-top: 0.3rem !important;
 }
@@ -223,15 +224,15 @@ def render_sidebar() -> None:
 [data-testid="stMainBlockContainer"] h2,
 [data-testid="stVerticalBlock"] h2 {
     font-weight: 800 !important;
-    color: var(--text-color, rgba(255,255,255,0.95)) !important;
+    color: var(--text-color) !important;
     letter-spacing: -0.015em !important;
     line-height: 1.2 !important;
 }
 
 /* ── Sidebar DB status card ────────────────────────────────── */
 .db-status-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: color-mix(in srgb, var(--text-color) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent);
     border-radius: 8px;
     padding: 0.7rem 0.9rem;
     margin: 0 0.1rem 0.6rem;
@@ -249,7 +250,7 @@ def render_sidebar() -> None:
     display: inline-block;
     flex-shrink: 0;
 }
-.db-status-name { font-weight: 600; color: rgba(255,255,255,0.85); }
+.db-status-name { font-weight: 600; color: var(--text-color); }
 .db-stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -257,106 +258,37 @@ def render_sidebar() -> None:
     text-align: center;
 }
 .db-stat-lbl {
-    color: rgba(255,255,255,0.45);
+    color: color-mix(in srgb, var(--text-color) 45%, transparent);
     font-size: 0.68rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
 .db-stat-val {
-    color: #fff;
+    color: var(--text-color);
     font-weight: 700;
     font-size: 1rem;
 }
 .db-stat-val-sm { font-size: 0.82rem; margin-top: 0.1rem; }
 
-/* ══════════════════════════════════════════════════════════════
-   LIGHT MODE OVERRIDES
-   Streamlit sets [data-theme="light"] on <html> when the user
-   switches via the ⋮ → Settings menu.
-   ══════════════════════════════════════════════════════════════ */
-
-/* Page titles — force dark text in light mode (var(--text-color) fallback is white) */
-[data-theme="light"] [data-testid="stMainBlockContainer"] h2,
-[data-theme="light"] [data-testid="stVerticalBlock"] h2 {
-    color: rgba(0,0,0,0.85) !important;
-}
-
-/* Nav links */
-[data-theme="light"] [data-testid="stSidebarNavLink"]:hover {
-    background: rgba(0,0,0,0.05);
-    border-left: 3px solid rgba(49,130,206,0.5);
-}
-[data-theme="light"] [data-testid="stSidebarNavLink"][aria-selected="true"] {
-    background: rgba(49,130,206,0.14);
-}
-
-/* Sidebar DB status card */
-[data-theme="light"] .db-status-card {
-    background: rgba(0,0,0,0.03);
-    border-color: rgba(0,0,0,0.1);
-}
-[data-theme="light"] .db-status-name { color: rgba(0,0,0,0.75); }
-[data-theme="light"] .db-stat-lbl    { color: rgba(0,0,0,0.45); }
-[data-theme="light"] .db-stat-val    { color: rgba(0,0,0,0.85); }
-
-/* Slider label */
-[data-theme="light"] [data-testid="stSlider"] label {
-    color: rgba(0,0,0,0.5) !important;
-}
-
-/* Slider track background (unfilled) — visible on white */
-[data-theme="light"] [data-testid="stSlider"] [data-baseweb="slider"] > div:first-child > div:first-child {
-    background: rgba(0,0,0,0.12) !important;
-}
-/* Slider track filled portion — keep blue */
-[data-theme="light"] [data-testid="stSlider"] [data-baseweb="slider"] > div:first-child > div:first-child > div {
-    background: #3182CE !important;
-}
-
-/* Thumb */
-[data-theme="light"] [data-testid="stSlider"] [role="slider"] {
-    border-color: #3182CE !important;
-}
-
-/* Value bubble */
-[data-theme="light"] [data-testid="stThumbValue"],
-[data-theme="light"] [data-testid="stThumbValue"] > div,
-[data-theme="light"] [data-testid="stThumbValue"] span,
-[data-theme="light"] [data-testid="stThumbValue"] * {
-    background: #EBF4FF !important;
-    color: #2B6CB0 !important;
-    border-color: rgba(49,130,206,0.45) !important;
-}
-[data-theme="light"] [data-testid="stSlider"] [role="tooltip"],
-[data-theme="light"] [data-testid="stSlider"] [role="tooltip"] * {
-    background: #EBF4FF !important;
-    color: #2B6CB0 !important;
-}
-
-/* Tick bar */
-[data-theme="light"] [data-testid="stTickBar"] {
-    color: rgba(0,0,0,0.3) !important;
-}
-
-/* ── Plotly charts — light mode text & grid ──────────────────── */
+/* ── Plotly charts — theme-adaptive text & grid ──────────────── */
 /* Streamlit renders Plotly inline (not iframed) so CSS reaches SVG */
-[data-theme="light"] .js-plotly-plot .xtick text,
-[data-theme="light"] .js-plotly-plot .ytick text,
-[data-theme="light"] .js-plotly-plot .legendtext,
-[data-theme="light"] .js-plotly-plot .g-xtitle text,
-[data-theme="light"] .js-plotly-plot .g-ytitle text,
-[data-theme="light"] .js-plotly-plot .annotation-text text,
-[data-theme="light"] .js-plotly-plot .cbaxis text {
-    fill: rgba(50,50,50,0.72) !important;
+.js-plotly-plot .xtick text,
+.js-plotly-plot .ytick text,
+.js-plotly-plot .legendtext,
+.js-plotly-plot .g-xtitle text,
+.js-plotly-plot .g-ytitle text,
+.js-plotly-plot .annotation-text text,
+.js-plotly-plot .cbaxis text {
+    fill: color-mix(in srgb, var(--text-color) 55%, transparent) !important;
 }
-[data-theme="light"] .js-plotly-plot .gridlayer path {
-    stroke: rgba(0,0,0,0.07) !important;
+.js-plotly-plot .gridlayer path {
+    stroke: color-mix(in srgb, var(--text-color) 7%, transparent) !important;
 }
-[data-theme="light"] .js-plotly-plot .zerolinelayer path {
-    stroke: rgba(0,0,0,0.12) !important;
+.js-plotly-plot .zerolinelayer path {
+    stroke: color-mix(in srgb, var(--text-color) 12%, transparent) !important;
 }
-[data-theme="light"] .js-plotly-plot .bg {
-    fill: rgba(0,0,0,0.02) !important;
+.js-plotly-plot .bg {
+    fill: color-mix(in srgb, var(--text-color) 2%, transparent) !important;
 }
 </style>
 """, unsafe_allow_html=True)

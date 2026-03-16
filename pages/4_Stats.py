@@ -88,7 +88,7 @@ def _inject_css() -> None:
 .stats-title {
     font-size: 1.5rem;
     font-weight: 800;
-    color: rgba(255,255,255,0.92);
+    color: var(--text-color);
     letter-spacing: -0.01em;
 }
 .filter-pill {
@@ -99,7 +99,7 @@ def _inject_css() -> None:
     padding: 0.22rem 0.65rem;
     border-radius: 4px;
     background: rgba(49,130,206,0.1);
-    color: #63B3ED;
+    color: #3182CE;
     border: 1px solid rgba(49,130,206,0.2);
 }
 .section-lbl {
@@ -107,7 +107,7 @@ def _inject_css() -> None:
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.28);
+    color: color-mix(in srgb, var(--text-color) 28%, transparent);
     margin: 1.5rem 0 0.65rem;
     display: flex;
     align-items: center;
@@ -117,11 +117,11 @@ def _inject_css() -> None:
     content: '';
     flex: 1;
     height: 1px;
-    background: rgba(255,255,255,0.06);
+    background: color-mix(in srgb, var(--text-color) 6%, transparent);
 }
 .stat-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: color-mix(in srgb, var(--text-color) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--text-color) 8%, transparent);
     border-radius: 10px;
     padding: 0.85rem 1rem;
     text-align: center;
@@ -129,7 +129,7 @@ def _inject_css() -> None:
 .stat-card .sc-num {
     font-size: 1.8rem;
     font-weight: 800;
-    color: #fff;
+    color: var(--text-color);
     line-height: 1;
 }
 .stat-card .sc-lbl {
@@ -137,31 +137,14 @@ def _inject_css() -> None:
     font-weight: 700;
     letter-spacing: 0.09em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.3);
+    color: color-mix(in srgb, var(--text-color) 30%, transparent);
     margin-top: 0.28rem;
 }
 .stat-card .sc-sub {
     font-size: 0.7rem;
-    color: rgba(255,255,255,0.22);
+    color: color-mix(in srgb, var(--text-color) 22%, transparent);
     margin-top: 0.12rem;
 }
-
-/* ── Light mode overrides ─────────────────────────────────── */
-[data-theme="light"] .stats-title { color: rgba(0,0,0,0.85); }
-[data-theme="light"] .filter-pill {
-    color: #2B6CB0;
-    background: rgba(49,130,206,0.08);
-    border-color: rgba(49,130,206,0.25);
-}
-[data-theme="light"] .section-lbl { color: rgba(0,0,0,0.4); }
-[data-theme="light"] .section-lbl::after { background: rgba(0,0,0,0.08); }
-[data-theme="light"] .stat-card {
-    background: rgba(0,0,0,0.03);
-    border-color: rgba(0,0,0,0.08);
-}
-[data-theme="light"] .stat-card .sc-num { color: rgba(0,0,0,0.85); }
-[data-theme="light"] .stat-card .sc-lbl { color: rgba(0,0,0,0.45); }
-[data-theme="light"] .stat-card .sc-sub { color: rgba(0,0,0,0.4); }
 </style>
 """, unsafe_allow_html=True)
 
