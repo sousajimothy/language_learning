@@ -231,8 +231,8 @@ def render_sidebar() -> None:
 
 /* ── Sidebar DB status card ────────────────────────────────── */
 .db-status-card {
-    background: color-mix(in srgb, var(--text-color) 4%, transparent);
-    border: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent);
+    background: color-mix(in srgb, var(--text-color) 6%, transparent);
+    border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent);
     border-radius: 8px;
     padding: 0.7rem 0.9rem;
     margin: 0 0.1rem 0.6rem;
@@ -289,6 +289,19 @@ def render_sidebar() -> None:
 }
 .js-plotly-plot .bg {
     fill: color-mix(in srgb, var(--text-color) 2%, transparent) !important;
+}
+/* Bar chart text labels (outside/inside bars) */
+.js-plotly-plot .trace.bars text {
+    fill: color-mix(in srgb, var(--text-color) 65%, transparent) !important;
+}
+/* Pie/donut chart text */
+.js-plotly-plot .pielayer text,
+.js-plotly-plot .trace.pie text {
+    fill: color-mix(in srgb, var(--text-color) 55%, transparent) !important;
+}
+/* Scatter chart text labels */
+.js-plotly-plot .trace.scatter text {
+    fill: color-mix(in srgb, var(--text-color) 45%, transparent) !important;
 }
 </style>
 """, unsafe_allow_html=True)

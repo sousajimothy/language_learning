@@ -61,8 +61,8 @@ st.markdown("""
     background: color-mix(in srgb, var(--text-color) 6%, transparent);
 }
 .stat-card {
-    background: color-mix(in srgb, var(--text-color) 4%, transparent);
-    border: 1px solid color-mix(in srgb, var(--text-color) 8%, transparent);
+    background: color-mix(in srgb, var(--text-color) 6%, transparent);
+    border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent);
     border-radius: 10px;
     padding: 0.85rem 1rem;
     text-align: center;
@@ -223,7 +223,7 @@ if worst_rows:
         marker=dict(color=colours, line=dict(width=0)),
         text=[f"{a:.0f}%" for a in accs],
         textposition="outside",
-        textfont=dict(size=11, color="rgba(255,255,255,0.5)"),
+        textfont=dict(size=11, color="rgba(128,128,128,0.7)"),
         hovertemplate=(
             "<b>%{y}</b><br>"
             "Accuracy: %{x:.0f}%<br>"
@@ -234,26 +234,26 @@ if worst_rows:
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="rgba(255,255,255,0.45)", size=12),
+        font=dict(color="rgba(128,128,128,0.65)", size=12),
         xaxis=dict(
             range=[0, 118],
             ticksuffix="%",
-            gridcolor="rgba(255,255,255,0.05)",
+            gridcolor="rgba(128,128,128,0.1)",
             zeroline=False,
-            tickfont=dict(size=11, color="rgba(255,255,255,0.35)"),
+            tickfont=dict(size=11, color="rgba(128,128,128,0.55)"),
         ),
         yaxis=dict(
             autorange="reversed",
             showgrid=False,
             zeroline=False,
-            tickfont=dict(size=11, color="rgba(255,255,255,0.65)"),
+            tickfont=dict(size=11, color="rgba(128,128,128,0.8)"),
         ),
         bargap=0.28,
         height=max(220, len(chart_df) * 28),
         margin=dict(l=4, r=52, t=8, b=4),
         hoverlabel=dict(
             bgcolor="#1A202C",
-            bordercolor="rgba(255,255,255,0.12)",
+            bordercolor="rgba(128,128,128,0.2)",
             font=dict(color="rgba(255,255,255,0.85)", size=12),
         ),
     )
@@ -343,7 +343,7 @@ if missed_rows:
         mode="markers+text",
         text=scatter_df["label"],
         textposition="top center",
-        textfont=dict(size=9, color="rgba(255,255,255,0.35)"),
+        textfont=dict(size=9, color="rgba(128,128,128,0.55)"),
         marker=dict(
             color=scatter_df["color"].tolist(),
             size=scatter_df["Total attempts"].apply(lambda n: max(8, min(n * 1.5, 24))).tolist(),
@@ -368,32 +368,32 @@ if missed_rows:
     fig_scatter.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="rgba(255,255,255,0.45)", size=12),
+        font=dict(color="rgba(128,128,128,0.65)", size=12),
         xaxis=dict(
             title="All-time accuracy",
             ticksuffix="%",
             range=[-2, 105],
-            gridcolor="rgba(255,255,255,0.05)",
+            gridcolor="rgba(128,128,128,0.1)",
             zeroline=False,
-            tickfont=dict(size=11, color="rgba(255,255,255,0.35)"),
+            tickfont=dict(size=11, color="rgba(128,128,128,0.55)"),
         ),
         yaxis=dict(
             title="Times missed",
-            gridcolor="rgba(255,255,255,0.05)",
+            gridcolor="rgba(128,128,128,0.1)",
             zeroline=False,
-            tickfont=dict(size=11, color="rgba(255,255,255,0.35)"),
+            tickfont=dict(size=11, color="rgba(128,128,128,0.55)"),
         ),
         height=320,
         margin=dict(l=4, r=4, t=8, b=4),
         hoverlabel=dict(
             bgcolor="#1A202C",
-            bordercolor="rgba(255,255,255,0.12)",
+            bordercolor="rgba(128,128,128,0.2)",
             font=dict(color="rgba(255,255,255,0.85)", size=12),
         ),
     )
     st.plotly_chart(fig_scatter, width="stretch")
     st.markdown(
-        '<div style="font-size:0.7rem;color:rgba(255,255,255,0.22);margin-top:-0.5rem;margin-bottom:0.75rem;">'
+        '<div style="font-size:0.7rem;color:color-mix(in srgb, var(--text-color) 22%, transparent);margin-top:-0.5rem;margin-bottom:0.75rem;">'
         'Bubble size ∝ total attempts. Words in the top-left corner are both frequently missed '
         'and have low accuracy — highest priority for review.</div>',
         unsafe_allow_html=True,

@@ -24,7 +24,7 @@ st.markdown("""
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
+    color: color-mix(in srgb, var(--text-color) 35%, transparent);
     margin-bottom: 0.4rem;
 }
 /* ── Format chip strip ──────────────────────────────────────────── */
@@ -35,7 +35,7 @@ st.markdown("""
 }
 .fmt-chip {
     flex: 1;
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 1px solid color-mix(in srgb, var(--text-color) 12%, transparent);
     border-radius: 8px;
     padding: 0.55rem 0.75rem;
     cursor: pointer;
@@ -48,11 +48,11 @@ st.markdown("""
 .fmt-chip .chip-title {
     font-weight: 600;
     font-size: 0.85rem;
-    color: rgba(255,255,255,0.9);
+    color: color-mix(in srgb, var(--text-color) 90%, transparent);
 }
 .fmt-chip .chip-desc {
     font-size: 0.72rem;
-    color: rgba(255,255,255,0.42);
+    color: color-mix(in srgb, var(--text-color) 42%, transparent);
     margin-top: 0.15rem;
     line-height: 1.35;
 }
@@ -67,7 +67,7 @@ st.markdown("""
     border-radius: 8px;
     padding: 0.7rem 0.6rem 0.5rem;
     text-align: center;
-    border: 1px solid rgba(255,255,255,0.06);
+    border: 1px solid color-mix(in srgb, var(--text-color) 6%, transparent);
 }
 .result-pill .rp-num {
     font-size: 1.6rem;
@@ -82,7 +82,7 @@ st.markdown("""
     margin-top: 0.25rem;
     opacity: 0.55;
 }
-.pill-read     { background: rgba(255,255,255,0.05); }
+.pill-read     { background: color-mix(in srgb, var(--text-color) 5%, transparent); }
 .pill-inserted { background: rgba(72,187,120,0.12);  color: #68D391; }
 .pill-updated  { background: rgba(246,173,85,0.12);  color: #F6AD55; }
 .pill-skipped  { background: rgba(160,174,192,0.1);  color: #A0AEC0; }
@@ -91,8 +91,8 @@ st.markdown("""
     display: flex;
     align-items: center;
     gap: 0.85rem;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: color-mix(in srgb, var(--text-color) 4%, transparent);
+    border: 1px solid color-mix(in srgb, var(--text-color) 10%, transparent);
     border-radius: 8px;
     padding: 0.75rem 1rem;
     margin-bottom: 0.85rem;
@@ -104,12 +104,12 @@ st.markdown("""
 .file-card .fc-name {
     font-weight: 600;
     font-size: 0.88rem;
-    color: rgba(255,255,255,0.9);
+    color: color-mix(in srgb, var(--text-color) 90%, transparent);
     word-break: break-all;
 }
 .file-card .fc-meta {
     font-size: 0.72rem;
-    color: rgba(255,255,255,0.38);
+    color: color-mix(in srgb, var(--text-color) 38%, transparent);
     margin-top: 0.1rem;
 }
 /* ── History badge ──────────────────────────────────────────────── */
@@ -129,7 +129,7 @@ st.markdown("""
 # ── Page header ──────────────────────────────────────────────────────────────
 st.markdown("## 📥 Import Vocabulary")
 st.markdown(
-    '<p style="color:rgba(255,255,255,0.45);margin-top:-0.4rem;font-size:0.9rem;">'
+    '<p style="color:color-mix(in srgb, var(--text-color) 45%, transparent);margin-top:-0.4rem;font-size:0.9rem;">'
     "Add word lists to your practice database from a local file or the latest export."
     "</p>",
     unsafe_allow_html=True,
@@ -193,7 +193,7 @@ with tab_upload:
 
     if source_label.strip():
         st.markdown(
-            f'<span style="font-size:0.78rem;color:rgba(255,255,255,0.38);">'
+            f'<span style="font-size:0.78rem;color:color-mix(in srgb, var(--text-color) 38%, transparent);">'
             f'Will be stored as <code>{fmt}:{source_label.strip()}</code></span>',
             unsafe_allow_html=True,
         )
@@ -260,7 +260,7 @@ with tab_upload:
             st.markdown(f"""
 <div class="result-row">
   <div class="result-pill pill-read">
-    <div class="rp-num" style="color:rgba(255,255,255,0.85);">{len(rows)}</div>
+    <div class="rp-num" style="color:color-mix(in srgb, var(--text-color) 85%, transparent);">{len(rows)}</div>
     <div class="rp-lbl">Read</div>
   </div>
   <div class="result-pill pill-inserted">
@@ -320,7 +320,7 @@ with tab_quick:
 
         if quick_label.strip():
             st.markdown(
-                f'<span style="font-size:0.78rem;color:rgba(255,255,255,0.38);">'
+                f'<span style="font-size:0.78rem;color:color-mix(in srgb, var(--text-color) 38%, transparent);">'
                 f'Will be stored as <code>pipeline:{quick_label.strip()}</code></span>',
                 unsafe_allow_html=True,
             )
@@ -337,9 +337,9 @@ with tab_quick:
                 for f in xlsx_files[1:]:
                     mtime_other = datetime.fromtimestamp(f.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
                     st.markdown(
-                        f'<span style="font-size:0.82rem; color:rgba(255,255,255,0.6);">'
+                        f'<span style="font-size:0.82rem; color:color-mix(in srgb, var(--text-color) 60%, transparent);">'
                         f'📄 {f.name}</span>'
-                        f'<span style="font-size:0.72rem; color:rgba(255,255,255,0.3);"> — {mtime_other}</span>',
+                        f'<span style="font-size:0.72rem; color:color-mix(in srgb, var(--text-color) 30%, transparent);"> — {mtime_other}</span>',
                         unsafe_allow_html=True,
                     )
 
@@ -384,7 +384,7 @@ with tab_quick:
             st.markdown(f"""
 <div class="result-row">
   <div class="result-pill pill-read">
-    <div class="rp-num" style="color:rgba(255,255,255,0.85);">{len(rows)}</div>
+    <div class="rp-num" style="color:color-mix(in srgb, var(--text-color) 85%, transparent);">{len(rows)}</div>
     <div class="rp-lbl">Read</div>
   </div>
   <div class="result-pill pill-inserted">
