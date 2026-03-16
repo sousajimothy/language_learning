@@ -223,7 +223,7 @@ if worst_rows:
         marker=dict(color=colours, line=dict(width=0)),
         text=[f"{a:.0f}%" for a in accs],
         textposition="outside",
-        textfont=dict(size=11, color="rgba(255,255,255,0.55)"),
+        textfont=dict(size=11),
         hovertemplate=(
             "<b>%{y}</b><br>"
             "Accuracy: %{x:.0f}%<br>"
@@ -232,22 +232,8 @@ if worst_rows:
         customdata=chart_df["attempts_window"],
     ))
     fig.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="rgba(255,255,255,0.55)", size=12),
-        xaxis=dict(
-            range=[0, 118],
-            ticksuffix="%",
-            gridcolor="rgba(255,255,255,0.07)",
-            zeroline=False,
-            tickfont=dict(size=11, color="rgba(255,255,255,0.45)"),
-        ),
-        yaxis=dict(
-            autorange="reversed",
-            showgrid=False,
-            zeroline=False,
-            tickfont=dict(size=11, color="rgba(255,255,255,0.6)"),
-        ),
+        xaxis=dict(range=[0, 118], ticksuffix="%", zeroline=False),
+        yaxis=dict(autorange="reversed", showgrid=False, zeroline=False),
         bargap=0.28,
         height=max(220, len(chart_df) * 28),
         margin=dict(l=4, r=52, t=8, b=4),
@@ -257,7 +243,7 @@ if worst_rows:
             font=dict(color="rgba(255,255,255,0.85)", size=12),
         ),
     )
-    st.plotly_chart(fig, width="stretch")
+    st.plotly_chart(fig, use_container_width=True, theme="streamlit")
 
     # ── Table ─────────────────────────────────────────────────────────────────
     tbl = worst_df.rename(columns={
@@ -343,7 +329,7 @@ if missed_rows:
         mode="markers+text",
         text=scatter_df["label"],
         textposition="top center",
-        textfont=dict(size=9, color="rgba(255,255,255,0.45)"),
+        textfont=dict(size=9),
         marker=dict(
             color=scatter_df["color"].tolist(),
             size=scatter_df["Total attempts"].apply(lambda n: max(8, min(n * 1.5, 24))).tolist(),
@@ -366,23 +352,8 @@ if missed_rows:
         annotation_font=dict(size=10, color="rgba(72,187,120,0.5)"),
     )
     fig_scatter.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="rgba(255,255,255,0.55)", size=12),
-        xaxis=dict(
-            title="All-time accuracy",
-            ticksuffix="%",
-            range=[-2, 105],
-            gridcolor="rgba(255,255,255,0.07)",
-            zeroline=False,
-            tickfont=dict(size=11, color="rgba(255,255,255,0.45)"),
-        ),
-        yaxis=dict(
-            title="Times missed",
-            gridcolor="rgba(255,255,255,0.07)",
-            zeroline=False,
-            tickfont=dict(size=11, color="rgba(255,255,255,0.45)"),
-        ),
+        xaxis=dict(title="All-time accuracy", ticksuffix="%", range=[-2, 105], zeroline=False),
+        yaxis=dict(title="Times missed", zeroline=False),
         height=320,
         margin=dict(l=4, r=4, t=8, b=4),
         hoverlabel=dict(
@@ -391,7 +362,7 @@ if missed_rows:
             font=dict(color="rgba(255,255,255,0.85)", size=12),
         ),
     )
-    st.plotly_chart(fig_scatter, width="stretch")
+    st.plotly_chart(fig_scatter, use_container_width=True, theme="streamlit")
     st.markdown(
         '<div style="font-size:0.7rem;color:color-mix(in srgb, var(--text-color) 22%, transparent);margin-top:-0.5rem;margin-bottom:0.75rem;">'
         'Bubble size ∝ total attempts. Words in the top-left corner are both frequently missed '

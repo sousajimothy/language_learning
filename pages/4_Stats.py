@@ -25,29 +25,17 @@ C_AMBER  = "#ECC94B"
 C_RED    = "#FC8181"
 C_PURPLE = "#B794F4"
 C_TEAL   = "#38B2AC"
-C_MUTED  = "rgba(255,255,255,0.25)"
-
 _BASE_LAYOUT = dict(
-    paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(color="rgba(255,255,255,0.55)", family="Inter, system-ui, sans-serif", size=12),
-    xaxis=dict(
-        gridcolor="rgba(255,255,255,0.07)",
-        zeroline=False,
-        linecolor="rgba(255,255,255,0.10)",
-        tickfont=dict(size=11, color="rgba(255,255,255,0.45)"),
-    ),
-    yaxis=dict(
-        gridcolor="rgba(255,255,255,0.07)",
-        zeroline=False,
-        linecolor="rgba(255,255,255,0.10)",
-        tickfont=dict(size=11, color="rgba(255,255,255,0.45)"),
-    ),
+    # Structural / non-colour settings only.
+    # All colours (font, axes, grids, legend) are intentionally omitted so
+    # Streamlit's theme="streamlit" engine can own them and adapt to the
+    # user's active light/dark theme without any Python-side interference.
+    xaxis=dict(zeroline=False),
+    yaxis=dict(zeroline=False),
     legend=dict(
         orientation="h",
         yanchor="bottom", y=1.02,
         xanchor="right", x=1,
-        font=dict(size=11, color="rgba(255,255,255,0.55)"),
         bgcolor="rgba(0,0,0,0)",
         borderwidth=0,
     ),
@@ -328,7 +316,7 @@ if rows_trend:
         xaxis=dict(title=""),
         height=280,
     ))
-    st.plotly_chart(fig_trend, width="stretch")
+    st.plotly_chart(fig_trend, use_container_width=True, theme="streamlit")
 else:
     st.info("No attempts in the selected window.")
 
@@ -380,7 +368,7 @@ if rows_drill:
         y=drill_df["Attempts"] + 0.8,
         mode="text",
         text=drill_df["Acc %"],
-        textfont=dict(size=11, color="rgba(255,255,255,0.55)"),
+        textfont=dict(size=11),
         showlegend=False,
         hoverinfo="skip",
     ))
@@ -392,7 +380,7 @@ if rows_drill:
         yaxis=dict(title="Questions"),
         height=280,
     ))
-    st.plotly_chart(fig_drill, width="stretch")
+    st.plotly_chart(fig_drill, use_container_width=True, theme="streamlit")
 
     # Compact summary table
     tbl = drill_df[["Drill type", "Attempts", "Correct", "Near-miss", "Wrong", "Acc %"]].copy()
@@ -460,15 +448,8 @@ if rows_activity:
         ygap=3,
     ))
     fig_heat.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="rgba(255,255,255,0.45)", size=11),
         xaxis=dict(showticklabels=False, showgrid=False, zeroline=False),
-        yaxis=dict(
-            showgrid=False, zeroline=False,
-            tickfont=dict(size=11, color="rgba(255,255,255,0.5)"),
-            side="left",
-        ),
+        yaxis=dict(showgrid=False, zeroline=False, tickfont=dict(size=11), side="left"),
         hoverlabel=dict(
             bgcolor="#1A202C",
             bordercolor="rgba(255,255,255,0.15)",
@@ -477,7 +458,7 @@ if rows_activity:
         height=180,
         margin=dict(t=8, b=8, l=40, r=8),
     )
-    st.plotly_chart(fig_heat, width="stretch")
+    st.plotly_chart(fig_heat, use_container_width=True, theme="streamlit")
 else:
     st.info("No practice data yet.")
 
@@ -536,29 +517,27 @@ with col_donut:
         fig_donut.add_annotation(
             text=f"<b>{coverage_pct}%</b>",
             x=0.5, y=0.56,
-            font=dict(size=26, color="#ffffff"),
+            font=dict(size=26),
             showarrow=False,
         )
         fig_donut.add_annotation(
             text="covered",
             x=0.5, y=0.40,
-            font=dict(size=11, color="rgba(255,255,255,0.5)"),
+            font=dict(size=11),
             showarrow=False,
         )
         fig_donut.add_annotation(
             text=f"{practiced} of {total} words",
             x=0.5, y=0.25,
-            font=dict(size=11, color="rgba(255,255,255,0.35)"),
+            font=dict(size=11),
             showarrow=False,
         )
         fig_donut.update_layout(
-            paper_bgcolor="rgba(0,0,0,0)",
             showlegend=True,
             legend=dict(
                 orientation="h",
                 yanchor="top", y=-0.02,
                 xanchor="center", x=0.5,
-                font=dict(size=11, color="rgba(255,255,255,0.5)"),
                 bgcolor="rgba(0,0,0,0)",
             ),
             hoverlabel=dict(bgcolor="#1A202C", bordercolor="rgba(255,255,255,0.15)",
@@ -566,7 +545,7 @@ with col_donut:
             height=280,
             margin=dict(t=8, b=8, l=8, r=8),
         )
-        st.plotly_chart(fig_donut, width="stretch")
+        st.plotly_chart(fig_donut, use_container_width=True, theme="streamlit")
     else:
         st.info("No vocab items found for the selected source.")
 
@@ -602,7 +581,7 @@ with col_hard:
             marker=dict(color=colours, line=dict(width=0)),
             text=[f"{a:.0f}%" for a in accs],
             textposition="outside",
-            textfont=dict(size=11, color="rgba(255,255,255,0.55)"),
+            textfont=dict(size=11),
             hovertemplate=(
                 "<b>%{y}</b><br>"
                 "Accuracy: %{x:.0f}%<br>"
@@ -617,7 +596,7 @@ with col_hard:
             height=280,
             margin=dict(l=4, r=48, t=8, b=4),
         ))
-        st.plotly_chart(fig_hard, width="stretch")
+        st.plotly_chart(fig_hard, use_container_width=True, theme="streamlit")
     else:
         st.info("Not enough practice data yet (need ≥ 2 attempts per item).")
 
@@ -680,7 +659,7 @@ with col_dist:
             bargap=0.15,
             height=280,
         ))
-        st.plotly_chart(fig_dist, width="stretch")
+        st.plotly_chart(fig_dist, use_container_width=True, theme="streamlit")
         st.markdown(
             '<div style="font-size:0.7rem;color:color-mix(in srgb, var(--text-color) 25%, transparent);margin-top:-0.5rem;">'
             'Words with ≥ 2 attempts, grouped by accuracy bucket.</div>',
@@ -725,7 +704,7 @@ with col_lat:
             marker=dict(color=lat_df["color"].tolist(), line=dict(width=0)),
             text=[f"{s}s" for s in lat_df["Avg s"]],
             textposition="outside",
-            textfont=dict(size=11, color="rgba(255,255,255,0.55)"),
+            textfont=dict(size=11),
             hovertemplate=(
                 "<b>%{y}</b><br>"
                 "Avg response: %{x}s<br>"
@@ -740,7 +719,7 @@ with col_lat:
             height=280,
             margin=dict(l=4, r=48, t=8, b=4),
         ))
-        st.plotly_chart(fig_lat, width="stretch")
+        st.plotly_chart(fig_lat, use_container_width=True, theme="streamlit")
         st.markdown(
             '<div style="font-size:0.7rem;color:color-mix(in srgb, var(--text-color) 25%, transparent);margin-top:-0.5rem;">'
             'Average time between receiving a question and submitting an answer.</div>',
