@@ -270,6 +270,56 @@ def render_sidebar() -> None:
 }
 .db-stat-val-sm { font-size: 0.82rem; margin-top: 0.1rem; }
 
+/* ── Plotly charts — theme-adaptive text & grid ──────────────────────────
+   Key insight: use fill/stroke with var(--text-color) + a SEPARATE opacity
+   property, NOT color-mix(... transparent). "transparent" in CSS is
+   rgba(0,0,0,0) — its color component is black — so mixing with it drags
+   every color towards dark/gray, breaking dark mode readability.
+   var(--text-color) is white in dark mode, near-black in light mode, and
+   updates correctly when the Streamlit theme toggle is used. ────────────── */
+
+/* Axis tick labels, axis titles, legend text, colorbar labels */
+.js-plotly-plot .xtick text,
+.js-plotly-plot .ytick text,
+.js-plotly-plot .legendtext,
+.js-plotly-plot .g-xtitle text,
+.js-plotly-plot .g-ytitle text,
+.js-plotly-plot .cbaxis text {
+    fill: var(--text-color) !important;
+    fill-opacity: 0.55 !important;
+}
+/* Bar chart percentage / value labels rendered outside bars */
+.js-plotly-plot .trace.bars text {
+    fill: var(--text-color) !important;
+    fill-opacity: 0.60 !important;
+}
+/* Pie / donut slice labels */
+.js-plotly-plot .pielayer text,
+.js-plotly-plot .trace.pie text {
+    fill: var(--text-color) !important;
+    fill-opacity: 0.65 !important;
+}
+/* Scatter / marker word labels */
+.js-plotly-plot .trace.scatter text {
+    fill: var(--text-color) !important;
+    fill-opacity: 0.50 !important;
+}
+/* Annotation text (e.g. donut centre percentage, vline labels) */
+.js-plotly-plot .annotation text,
+.js-plotly-plot .annotation-text text {
+    fill: var(--text-color) !important;
+    fill-opacity: 0.80 !important;
+}
+/* Grid lines */
+.js-plotly-plot .gridlayer path {
+    stroke: var(--text-color) !important;
+    stroke-opacity: 0.08 !important;
+}
+/* Zero / axis lines */
+.js-plotly-plot .zerolinelayer path {
+    stroke: var(--text-color) !important;
+    stroke-opacity: 0.12 !important;
+}
 
 </style>
 """, unsafe_allow_html=True)

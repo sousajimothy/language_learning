@@ -525,7 +525,7 @@ with col_donut:
             values=[practiced, untouched],
             hole=0.68,
             marker=dict(
-                colors=[arc_color, "rgba(255,255,255,0.06)"],
+                colors=[arc_color, "rgba(120,120,130,0.30)"],
                 line=dict(color="rgba(0,0,0,0)", width=0),
             ),
             textinfo="none",
