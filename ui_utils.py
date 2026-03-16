@@ -231,8 +231,8 @@ def render_sidebar() -> None:
 
 /* ── Sidebar DB status card ────────────────────────────────── */
 .db-status-card {
-    background: color-mix(in srgb, var(--text-color) 6%, transparent);
-    border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent);
+    background: var(--secondary-background-color);
+    border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent);
     border-radius: 8px;
     padding: 0.7rem 0.9rem;
     margin: 0 0.1rem 0.6rem;
@@ -270,39 +270,7 @@ def render_sidebar() -> None:
 }
 .db-stat-val-sm { font-size: 0.82rem; margin-top: 0.1rem; }
 
-/* ── Plotly charts — theme-adaptive text & grid ──────────────── */
-/* Streamlit renders Plotly inline (not iframed) so CSS reaches SVG */
-.js-plotly-plot .xtick text,
-.js-plotly-plot .ytick text,
-.js-plotly-plot .legendtext,
-.js-plotly-plot .g-xtitle text,
-.js-plotly-plot .g-ytitle text,
-.js-plotly-plot .annotation-text text,
-.js-plotly-plot .cbaxis text {
-    fill: color-mix(in srgb, var(--text-color) 55%, transparent) !important;
-}
-.js-plotly-plot .gridlayer path {
-    stroke: color-mix(in srgb, var(--text-color) 7%, transparent) !important;
-}
-.js-plotly-plot .zerolinelayer path {
-    stroke: color-mix(in srgb, var(--text-color) 12%, transparent) !important;
-}
-.js-plotly-plot .bg {
-    fill: color-mix(in srgb, var(--text-color) 2%, transparent) !important;
-}
-/* Bar chart text labels (outside/inside bars) */
-.js-plotly-plot .trace.bars text {
-    fill: color-mix(in srgb, var(--text-color) 65%, transparent) !important;
-}
-/* Pie/donut chart text */
-.js-plotly-plot .pielayer text,
-.js-plotly-plot .trace.pie text {
-    fill: color-mix(in srgb, var(--text-color) 55%, transparent) !important;
-}
-/* Scatter chart text labels */
-.js-plotly-plot .trace.scatter text {
-    fill: color-mix(in srgb, var(--text-color) 45%, transparent) !important;
-}
+
 </style>
 """, unsafe_allow_html=True)
 

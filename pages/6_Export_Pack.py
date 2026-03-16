@@ -90,8 +90,8 @@ st.markdown("""
 
 /* ── Stat mini-cards ──────────────────────────────────────────── */
 .mini-card {
-    background: color-mix(in srgb, var(--text-color) 6%, transparent);
-    border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent);
+    background: var(--secondary-background-color);
+    border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent);
     border-radius: 8px;
     padding: 0.65rem 0.8rem;
     text-align: center;

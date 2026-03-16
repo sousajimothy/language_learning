@@ -76,8 +76,8 @@ def home_page() -> None:
 }
 /* ── Stat cards ───────────────────────────────────────────────────── */
 .stat-card {
-    background: color-mix(in srgb, var(--text-color) 6%, transparent);
-    border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent);
+    background: var(--secondary-background-color);
+    border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent);
     border-radius: 10px;
     padding: 0.9rem 1rem 0.75rem;
     text-align: center;

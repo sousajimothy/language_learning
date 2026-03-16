@@ -25,36 +25,36 @@ C_AMBER  = "#ECC94B"
 C_RED    = "#FC8181"
 C_PURPLE = "#B794F4"
 C_TEAL   = "#38B2AC"
-C_MUTED  = "rgba(128,128,128,0.4)"
+C_MUTED  = "rgba(255,255,255,0.25)"
 
 _BASE_LAYOUT = dict(
     paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(color="rgba(128,128,128,0.7)", family="Inter, system-ui, sans-serif", size=12),
+    font=dict(color="rgba(255,255,255,0.55)", family="Inter, system-ui, sans-serif", size=12),
     xaxis=dict(
-        gridcolor="rgba(128,128,128,0.1)",
+        gridcolor="rgba(255,255,255,0.07)",
         zeroline=False,
-        linecolor="rgba(128,128,128,0.12)",
-        tickfont=dict(size=11, color="rgba(128,128,128,0.6)"),
+        linecolor="rgba(255,255,255,0.10)",
+        tickfont=dict(size=11, color="rgba(255,255,255,0.45)"),
     ),
     yaxis=dict(
-        gridcolor="rgba(128,128,128,0.1)",
+        gridcolor="rgba(255,255,255,0.07)",
         zeroline=False,
-        linecolor="rgba(128,128,128,0.12)",
-        tickfont=dict(size=11, color="rgba(128,128,128,0.6)"),
+        linecolor="rgba(255,255,255,0.10)",
+        tickfont=dict(size=11, color="rgba(255,255,255,0.45)"),
     ),
     legend=dict(
         orientation="h",
         yanchor="bottom", y=1.02,
         xanchor="right", x=1,
-        font=dict(size=11, color="rgba(128,128,128,0.75)"),
+        font=dict(size=11, color="rgba(255,255,255,0.55)"),
         bgcolor="rgba(0,0,0,0)",
         borderwidth=0,
     ),
     margin=dict(l=4, r=4, t=36, b=4),
     hoverlabel=dict(
         bgcolor="#1A202C",
-        bordercolor="rgba(128,128,128,0.2)",
+        bordercolor="rgba(255,255,255,0.15)",
         font=dict(color="rgba(255,255,255,0.85)", size=12),
     ),
 )
@@ -120,8 +120,8 @@ def _inject_css() -> None:
     background: color-mix(in srgb, var(--text-color) 6%, transparent);
 }
 .stat-card {
-    background: color-mix(in srgb, var(--text-color) 6%, transparent);
-    border: 1px solid color-mix(in srgb, var(--text-color) 14%, transparent);
+    background: var(--secondary-background-color);
+    border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent);
     border-radius: 10px;
     padding: 0.85rem 1rem;
     text-align: center;
@@ -380,7 +380,7 @@ if rows_drill:
         y=drill_df["Attempts"] + 0.8,
         mode="text",
         text=drill_df["Acc %"],
-        textfont=dict(size=11, color="rgba(128,128,128,0.75)"),
+        textfont=dict(size=11, color="rgba(255,255,255,0.55)"),
         showlegend=False,
         hoverinfo="skip",
     ))
@@ -446,7 +446,7 @@ if rows_activity:
         x=week_labels,
         y=[day_labels[i] for i in pivot.index],
         colorscale=[
-            [0.0,   "#161B22"],
+            [0.0,   "rgba(0,0,0,0)"],
             [0.001, "#0D4A6B"],
             [0.25,  "#1A6FA0"],
             [0.55,  "#2D9BC8"],
@@ -462,16 +462,16 @@ if rows_activity:
     fig_heat.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="rgba(128,128,128,0.6)", size=11),
+        font=dict(color="rgba(255,255,255,0.45)", size=11),
         xaxis=dict(showticklabels=False, showgrid=False, zeroline=False),
         yaxis=dict(
             showgrid=False, zeroline=False,
-            tickfont=dict(size=11, color="rgba(128,128,128,0.65)"),
+            tickfont=dict(size=11, color="rgba(255,255,255,0.5)"),
             side="left",
         ),
         hoverlabel=dict(
             bgcolor="#1A202C",
-            bordercolor="rgba(128,128,128,0.2)",
+            bordercolor="rgba(255,255,255,0.15)",
             font=dict(color="rgba(255,255,255,0.85)", size=12),
         ),
         height=180,
@@ -525,7 +525,7 @@ with col_donut:
             values=[practiced, untouched],
             hole=0.68,
             marker=dict(
-                colors=[arc_color, "rgba(128,128,128,0.15)"],
+                colors=[arc_color, "rgba(255,255,255,0.06)"],
                 line=dict(color="rgba(0,0,0,0)", width=0),
             ),
             textinfo="none",
@@ -536,19 +536,19 @@ with col_donut:
         fig_donut.add_annotation(
             text=f"<b>{coverage_pct}%</b>",
             x=0.5, y=0.56,
-            font=dict(size=26, color="rgba(128,128,128,0.95)"),
+            font=dict(size=26, color="#ffffff"),
             showarrow=False,
         )
         fig_donut.add_annotation(
             text="covered",
             x=0.5, y=0.40,
-            font=dict(size=11, color="rgba(128,128,128,0.5)"),
+            font=dict(size=11, color="rgba(255,255,255,0.5)"),
             showarrow=False,
         )
         fig_donut.add_annotation(
             text=f"{practiced} of {total} words",
             x=0.5, y=0.25,
-            font=dict(size=11, color="rgba(128,128,128,0.4)"),
+            font=dict(size=11, color="rgba(255,255,255,0.35)"),
             showarrow=False,
         )
         fig_donut.update_layout(
@@ -558,10 +558,10 @@ with col_donut:
                 orientation="h",
                 yanchor="top", y=-0.02,
                 xanchor="center", x=0.5,
-                font=dict(size=11, color="rgba(128,128,128,0.65)"),
+                font=dict(size=11, color="rgba(255,255,255,0.5)"),
                 bgcolor="rgba(0,0,0,0)",
             ),
-            hoverlabel=dict(bgcolor="#1A202C", bordercolor="rgba(128,128,128,0.2)",
+            hoverlabel=dict(bgcolor="#1A202C", bordercolor="rgba(255,255,255,0.15)",
                             font=dict(color="rgba(255,255,255,0.85)", size=12)),
             height=280,
             margin=dict(t=8, b=8, l=8, r=8),
@@ -602,7 +602,7 @@ with col_hard:
             marker=dict(color=colours, line=dict(width=0)),
             text=[f"{a:.0f}%" for a in accs],
             textposition="outside",
-            textfont=dict(size=11, color="rgba(128,128,128,0.75)"),
+            textfont=dict(size=11, color="rgba(255,255,255,0.55)"),
             hovertemplate=(
                 "<b>%{y}</b><br>"
                 "Accuracy: %{x:.0f}%<br>"
@@ -725,7 +725,7 @@ with col_lat:
             marker=dict(color=lat_df["color"].tolist(), line=dict(width=0)),
             text=[f"{s}s" for s in lat_df["Avg s"]],
             textposition="outside",
-            textfont=dict(size=11, color="rgba(128,128,128,0.75)"),
+            textfont=dict(size=11, color="rgba(255,255,255,0.55)"),
             hovertemplate=(
                 "<b>%{y}</b><br>"
                 "Avg response: %{x}s<br>"
