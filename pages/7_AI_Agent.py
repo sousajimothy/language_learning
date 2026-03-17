@@ -141,6 +141,76 @@ def _load_conversation(conv_id: int) -> None:
     st.session_state["chat_messages"] = msgs
 
 
+def _display_messages(messages: list[dict]) -> list[dict]:
+    """Filter messages to only user/assistant with text content."""
+    return [
+        m for m in messages
+        if m["role"] in ("user", "assistant") and m.get("content")
+    ]
+
+
+# ---------------------------------------------------------------------------
+# Export helpers
+# ---------------------------------------------------------------------------
+
+def _export_markdown(messages: list[dict]) -> str:
+    """Export visible conversation messages as markdown."""
+    parts: list[str] = []
+    for m in _display_messages(messages):
+        role = "You" if m["role"] == "user" else "Assistant"
+        parts.append(f"### {role}\n\n{m['content']}\n\n---")
+    return "\n\n".join(parts)
+
+
+def _export_plaintext(messages: list[dict]) -> str:
+    """Export visible conversation messages as plain text."""
+    parts: list[str] = []
+    for m in _display_messages(messages):
+        role = "You" if m["role"] == "user" else "Assistant"
+        parts.append(f"[{role}]: {m['content']}")
+    return "\n\n".join(parts)
+
+
+def _export_html(messages: list[dict]) -> str:
+    """Export visible conversation messages as styled HTML."""
+    from jinja2 import Template
+
+    tmpl = Template(
+        "<!DOCTYPE html>\n"
+        "<html>\n<head>\n"
+        '<meta charset="utf-8">\n'
+        "<title>Conversation Export</title>\n"
+        "<style>\n"
+        "body { font-family: -apple-system, BlinkMacSystemFont, "
+        "'Segoe UI', sans-serif; max-width: 700px; margin: 2rem auto; "
+        "padding: 0 1rem; background: #f7f7f8; color: #1a1a1a; }\n"
+        ".msg { margin: 1rem 0; padding: 1rem 1.2rem; "
+        "border-radius: 12px; }\n"
+        ".user { background: #e3f2fd; "
+        "border-left: 4px solid #3182CE; }\n"
+        ".assistant { background: #fff; "
+        "border-left: 4px solid #48BB78; "
+        "box-shadow: 0 1px 3px rgba(0,0,0,0.08); }\n"
+        ".role { font-size: 0.75rem; font-weight: 700; "
+        "text-transform: uppercase; letter-spacing: 0.05em; "
+        "color: #666; margin-bottom: 0.4rem; }\n"
+        ".content { line-height: 1.6; white-space: pre-wrap; }\n"
+        "</style>\n</head>\n<body>\n"
+        "<h1>Conversation Export</h1>\n"
+        "{% for msg in messages %}\n"
+        '<div class="msg {{ msg.role }}">\n'
+        '  <div class="role">'
+        '{{ "You" if msg.role == "user" else "Assistant" }}'
+        "</div>\n"
+        '  <div class="content">{{ msg.content | e }}</div>\n'
+        "</div>\n"
+        "{% endfor %}\n"
+        "</body>\n</html>",
+        autoescape=False,
+    )
+    return tmpl.render(messages=_display_messages(messages))
+
+
 def _build_openai_messages(db_messages: list[dict]) -> list[dict]:
     """Convert stored DB messages to OpenAI API format."""
     openai_msgs: list[dict] = []
@@ -219,6 +289,44 @@ with st.sidebar:
             st.session_state["chat_messages"] = []
             st.rerun()
 
+    # Export buttons (only when a conversation with messages exists)
+    has_content = (
+        st.session_state["chat_conv_id"] is not None
+        and _display_messages(st.session_state["chat_messages"])
+    )
+    if has_content:
+        st.markdown("")
+        st.markdown(
+            '<div class="conv-list-header">Export</div>',
+            unsafe_allow_html=True,
+        )
+        msgs = st.session_state["chat_messages"]
+
+        st.download_button(
+            "⬇ Markdown",
+            _export_markdown(msgs).encode("utf-8"),
+            file_name="conversation.md",
+            mime="text/markdown",
+            use_container_width=True,
+            key="export_md",
+        )
+        st.download_button(
+            "⬇ Plain text",
+            _export_plaintext(msgs).encode("utf-8"),
+            file_name="conversation.txt",
+            mime="text/plain",
+            use_container_width=True,
+            key="export_txt",
+        )
+        st.download_button(
+            "⬇ HTML",
+            _export_html(msgs).encode("utf-8"),
+            file_name="conversation.html",
+            mime="text/html",
+            use_container_width=True,
+            key="export_html",
+        )
+
     st.markdown(
         '<div class="retention-note">'
         "💡 Conversations auto-delete after 5 days of inactivity."
@@ -236,10 +344,7 @@ st.markdown("## 🤖 AI Agent")
 # Chat history replay
 # ---------------------------------------------------------------------------
 
-display_messages = [
-    m for m in st.session_state["chat_messages"]
-    if m["role"] in ("user", "assistant") and m.get("content")
-]
+display_messages = _display_messages(st.session_state["chat_messages"])
 
 if not display_messages and st.session_state["chat_conv_id"] is None:
     st.markdown(
