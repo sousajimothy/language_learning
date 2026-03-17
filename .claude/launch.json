@@ -1,4 +1,11 @@
 {
   "version": "0.0.1",
-  "configurations": []
+  "configurations": [
+    {
+      "name": "streamlit",
+      "runtimeExecutable": "micromamba",
+      "runtimeArgs": ["run", "-n", "language_learning_env", "streamlit", "run", "app.py", "--server.headless", "true"],
+      "port": 8501
+    }
+  ]
 }

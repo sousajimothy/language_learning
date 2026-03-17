@@ -88,6 +88,133 @@ def fmt_ts(ts: str | None) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Plotly theme helpers — single source of truth for all chart colours
+# ---------------------------------------------------------------------------
+
+def get_plotly_colors() -> dict:
+    """Return a colour palette keyed to the active Streamlit theme.
+
+    Reads ``st.context.theme.type`` at Python render time.  When the user
+    toggles the theme via the 3-dot menu, Streamlit re-runs the script and
+    this function returns the correct palette for the new theme — no CSS
+    hacks or JavaScript needed.
+
+    Call once per page render and pass the result to every
+    ``build_plotly_layout()`` call so all charts on the page share one
+    palette dict.
+    """
+    try:
+        is_dark = st.context.theme.type == "dark"
+    except Exception:
+        is_dark = None  # context unavailable — use neutral fallback
+
+    if is_dark is None:
+        # Cannot determine theme; return a neutral mid-contrast palette
+        # that is at least partially legible on both backgrounds.
+        return dict(
+            text         = "rgba(128,128,128,0.95)",
+            text_muted   = "rgba(128,128,128,0.70)",
+            grid         = "rgba(128,128,128,0.12)",
+            zeroline     = "rgba(128,128,128,0.20)",
+            hover_bg     = "#E2E8F0",
+            hover_border = "rgba(128,128,128,0.20)",
+            hover_text   = "rgba(50,50,50,0.90)",
+        )
+
+    if is_dark:
+        return dict(
+            text         = "rgba(250,250,250,0.85)",
+            text_muted   = "rgba(250,250,250,0.55)",
+            grid         = "rgba(255,255,255,0.08)",
+            zeroline     = "rgba(255,255,255,0.15)",
+            hover_bg     = "#1A202C",
+            hover_border = "rgba(255,255,255,0.15)",
+            hover_text   = "rgba(255,255,255,0.85)",
+        )
+    return dict(
+        text         = "rgba(26,32,44,0.85)",
+        text_muted   = "rgba(26,32,44,0.60)",
+        grid         = "rgba(0,0,0,0.08)",
+        zeroline     = "rgba(0,0,0,0.18)",
+        hover_bg     = "#EDF2F7",
+        hover_border = "rgba(0,0,0,0.15)",
+        hover_text   = "rgba(26,32,44,0.85)",
+    )
+
+
+def _deep_merge(base: dict, override: dict) -> dict:
+    """Recursively merge *override* into *base*; override wins on conflicts."""
+    merged = dict(base)
+    for k, v in override.items():
+        if isinstance(v, dict) and isinstance(merged.get(k), dict):
+            merged[k] = _deep_merge(merged[k], v)
+        else:
+            merged[k] = v
+    return merged
+
+
+def build_plotly_layout(c: dict | None = None, **overrides) -> dict:
+    """Return a complete, theme-correct Plotly layout dict.
+
+    Args:
+        c: Colour palette from :func:`get_plotly_colors`.  Fetched
+           automatically when omitted, but callers that create multiple
+           figures should pass the same palette to avoid repeated context
+           lookups.
+        **overrides: Any layout key that should differ from the base (e.g.
+           ``height=300``, ``barmode="stack"``).  Dict values are
+           *deep-merged* so that nested theme colours (e.g.
+           ``xaxis.tickfont.color``) are preserved when callers only
+           override sibling keys like ``tickfont.size``.
+    """
+    if c is None:
+        c = get_plotly_colors()
+
+    base: dict = dict(
+        paper_bgcolor      = "rgba(0,0,0,0)",
+        plot_bgcolor       = "rgba(0,0,0,0)",
+        font               = dict(color=c["text"]),
+        xaxis = dict(
+            zeroline   = False,
+            gridcolor  = c["grid"],
+            tickfont   = dict(color=c["text_muted"]),
+            title      = dict(font=dict(color=c["text_muted"])),
+            automargin = True,
+        ),
+        yaxis = dict(
+            zeroline   = False,
+            gridcolor  = c["grid"],
+            tickfont   = dict(color=c["text_muted"]),
+            title      = dict(font=dict(color=c["text_muted"])),
+            automargin = True,
+        ),
+        legend = dict(
+            orientation = "h",
+            yanchor     = "bottom", y=1.02,
+            xanchor     = "right",  x=1,
+            bgcolor     = "rgba(0,0,0,0)",
+            borderwidth = 0,
+            font        = dict(color=c["text_muted"]),
+        ),
+        hoverlabel = dict(
+            bgcolor     = c["hover_bg"],
+            bordercolor = c["hover_border"],
+            font        = dict(color=c["hover_text"], size=12),
+        ),
+        margin             = dict(l=8, r=8, t=36, b=8),
+        annotationdefaults = dict(font=dict(color=c["text"])),
+    )
+
+    for k, v in overrides.items():
+        if isinstance(v, dict) and isinstance(base.get(k), dict):
+            base[k] = _deep_merge(base[k], v)
+        else:
+            base[k] = v
+
+    return base
+
+
+# ---------------------------------------------------------------------------
 # Sidebar renderer — call once per page, right after st.set_page_config
 # ---------------------------------------------------------------------------
 
@@ -270,56 +397,6 @@ def render_sidebar() -> None:
 }
 .db-stat-val-sm { font-size: 0.82rem; margin-top: 0.1rem; }
 
-/* ── Plotly charts — theme-adaptive text & grid ──────────────────────────
-   Key insight: use fill/stroke with var(--text-color) + a SEPARATE opacity
-   property, NOT color-mix(... transparent). "transparent" in CSS is
-   rgba(0,0,0,0) — its color component is black — so mixing with it drags
-   every color towards dark/gray, breaking dark mode readability.
-   var(--text-color) is white in dark mode, near-black in light mode, and
-   updates correctly when the Streamlit theme toggle is used. ────────────── */
-
-/* Axis tick labels, axis titles, legend text, colorbar labels */
-.js-plotly-plot .xtick text,
-.js-plotly-plot .ytick text,
-.js-plotly-plot .legendtext,
-.js-plotly-plot .g-xtitle text,
-.js-plotly-plot .g-ytitle text,
-.js-plotly-plot .cbaxis text {
-    fill: var(--text-color) !important;
-    fill-opacity: 0.55 !important;
-}
-/* Bar chart percentage / value labels rendered outside bars */
-.js-plotly-plot .trace.bars text {
-    fill: var(--text-color) !important;
-    fill-opacity: 0.60 !important;
-}
-/* Pie / donut slice labels */
-.js-plotly-plot .pielayer text,
-.js-plotly-plot .trace.pie text {
-    fill: var(--text-color) !important;
-    fill-opacity: 0.65 !important;
-}
-/* Scatter / marker word labels */
-.js-plotly-plot .trace.scatter text {
-    fill: var(--text-color) !important;
-    fill-opacity: 0.50 !important;
-}
-/* Annotation text (e.g. donut centre percentage, vline labels) */
-.js-plotly-plot .annotation text,
-.js-plotly-plot .annotation-text text {
-    fill: var(--text-color) !important;
-    fill-opacity: 0.80 !important;
-}
-/* Grid lines */
-.js-plotly-plot .gridlayer path {
-    stroke: var(--text-color) !important;
-    stroke-opacity: 0.08 !important;
-}
-/* Zero / axis lines */
-.js-plotly-plot .zerolinelayer path {
-    stroke: var(--text-color) !important;
-    stroke-opacity: 0.12 !important;
-}
 
 </style>
 """, unsafe_allow_html=True)

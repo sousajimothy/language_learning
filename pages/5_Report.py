@@ -12,7 +12,10 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from german_pipeline import storage
-from ui_utils import cutoff_iso, fmt_rate, fmt_ts, get_db_path, list_sources, open_db
+from ui_utils import (
+    build_plotly_layout, cutoff_iso, fmt_rate, fmt_ts,
+    get_db_path, get_plotly_colors, list_sources, open_db,
+)
 
 # ---------------------------------------------------------------------------
 # CSS
@@ -157,6 +160,7 @@ finally:
     con.close()
 
 filter_label = stats.get("filter_label", source_choice)
+_c = get_plotly_colors()   # theme-aware colour palette for all charts this render
 
 # ── Page header — fills the placeholders reserved at the top of the page ──────
 title_slot.markdown("## 📋 Report")
@@ -231,19 +235,14 @@ if worst_rows:
         ),
         customdata=chart_df["attempts_window"],
     ))
-    fig.update_layout(
+    fig.update_layout(**build_plotly_layout(_c,
         xaxis=dict(range=[0, 118], ticksuffix="%", zeroline=False),
         yaxis=dict(autorange="reversed", showgrid=False, zeroline=False),
         bargap=0.28,
         height=max(220, len(chart_df) * 28),
-        margin=dict(l=4, r=52, t=8, b=4),
-        hoverlabel=dict(
-            bgcolor="#1A202C",
-            bordercolor="rgba(255,255,255,0.15)",
-            font=dict(color="rgba(255,255,255,0.85)", size=12),
-        ),
-    )
-    st.plotly_chart(fig, width="stretch", theme="streamlit")
+        margin=dict(r=52, t=8, b=4),
+    ))
+    st.plotly_chart(fig, width="stretch", theme=None)
 
     # ── Table ─────────────────────────────────────────────────────────────────
     tbl = worst_df.rename(columns={
@@ -351,18 +350,13 @@ if missed_rows:
         annotation_position="top right",
         annotation_font=dict(size=10, color="rgba(72,187,120,0.5)"),
     )
-    fig_scatter.update_layout(
+    fig_scatter.update_layout(**build_plotly_layout(_c,
         xaxis=dict(title="All-time accuracy", ticksuffix="%", range=[-2, 105], zeroline=False),
         yaxis=dict(title="Times missed", zeroline=False),
         height=320,
         margin=dict(l=4, r=4, t=8, b=4),
-        hoverlabel=dict(
-            bgcolor="#1A202C",
-            bordercolor="rgba(255,255,255,0.15)",
-            font=dict(color="rgba(255,255,255,0.85)", size=12),
-        ),
-    )
-    st.plotly_chart(fig_scatter, width="stretch", theme="streamlit")
+    ))
+    st.plotly_chart(fig_scatter, width="stretch", theme=None)
     st.markdown(
         '<div style="font-size:0.7rem;color:color-mix(in srgb, var(--text-color) 22%, transparent);margin-top:-0.5rem;margin-bottom:0.75rem;">'
         'Bubble size ∝ total attempts. Words in the top-left corner are both frequently missed '

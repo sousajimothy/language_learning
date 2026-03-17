@@ -12,7 +12,10 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from german_pipeline import storage
-from ui_utils import cutoff_iso, fmt_rate, fmt_ts, get_db_path, list_sources, open_db
+from ui_utils import (
+    build_plotly_layout, cutoff_iso, fmt_rate, fmt_ts,
+    get_db_path, get_plotly_colors, list_sources, open_db,
+)
 
 # ---------------------------------------------------------------------------
 # Colour palette & shared chart layout
@@ -25,39 +28,6 @@ C_AMBER  = "#ECC94B"
 C_RED    = "#FC8181"
 C_PURPLE = "#B794F4"
 C_TEAL   = "#38B2AC"
-_BASE_LAYOUT = dict(
-    # Structural / non-colour settings only.
-    # All colours (font, axes, grids, legend) are intentionally omitted so
-    # Streamlit's theme="streamlit" engine can own them and adapt to the
-    # user's active light/dark theme without any Python-side interference.
-    xaxis=dict(zeroline=False),
-    yaxis=dict(zeroline=False),
-    legend=dict(
-        orientation="h",
-        yanchor="bottom", y=1.02,
-        xanchor="right", x=1,
-        bgcolor="rgba(0,0,0,0)",
-        borderwidth=0,
-    ),
-    margin=dict(l=4, r=4, t=36, b=4),
-    hoverlabel=dict(
-        bgcolor="#1A202C",
-        bordercolor="rgba(255,255,255,0.15)",
-        font=dict(color="rgba(255,255,255,0.85)", size=12),
-    ),
-)
-
-
-def _chart_layout(**overrides) -> dict:
-    """Merge overrides into the base layout."""
-    import copy
-    layout = copy.deepcopy(_BASE_LAYOUT)
-    for k, v in overrides.items():
-        if isinstance(v, dict) and isinstance(layout.get(k), dict):
-            layout[k].update(v)
-        else:
-            layout[k] = v
-    return layout
 
 
 # ---------------------------------------------------------------------------
@@ -148,6 +118,7 @@ if not Path(db_path).exists():
     st.stop()
 
 _inject_css()
+_c = get_plotly_colors()   # theme-aware colour palette for all charts this render
 title_slot = st.empty()   # filled with h2 heading once filter_label is known
 pill_slot  = st.empty()   # filled with filter pill
 
@@ -311,12 +282,12 @@ if rows_trend:
         annotation_font=dict(size=10, color=C_AMBER),
     )
 
-    fig_trend.update_layout(**_chart_layout(
+    fig_trend.update_layout(**build_plotly_layout(_c,
         yaxis=dict(tickformat=".0%", range=[0, 1.08], title="Accuracy"),
         xaxis=dict(title=""),
         height=280,
     ))
-    st.plotly_chart(fig_trend, width="stretch", theme="streamlit")
+    st.plotly_chart(fig_trend, width="stretch", theme=None)
 else:
     st.info("No attempts in the selected window.")
 
@@ -373,14 +344,14 @@ if rows_drill:
         hoverinfo="skip",
     ))
 
-    fig_drill.update_layout(**_chart_layout(
+    fig_drill.update_layout(**build_plotly_layout(_c,
         barmode="stack",
         bargap=0.35,
         xaxis=dict(title=""),
         yaxis=dict(title="Questions"),
         height=280,
     ))
-    st.plotly_chart(fig_drill, width="stretch", theme="streamlit")
+    st.plotly_chart(fig_drill, width="stretch", theme=None)
 
     # Compact summary table
     tbl = drill_df[["Drill type", "Attempts", "Correct", "Near-miss", "Wrong", "Acc %"]].copy()
@@ -447,18 +418,14 @@ if rows_activity:
         xgap=3,
         ygap=3,
     ))
-    fig_heat.update_layout(
+    fig_heat.update_layout(**build_plotly_layout(_c,
         xaxis=dict(showticklabels=False, showgrid=False, zeroline=False),
-        yaxis=dict(showgrid=False, zeroline=False, tickfont=dict(size=11), side="left"),
-        hoverlabel=dict(
-            bgcolor="#1A202C",
-            bordercolor="rgba(255,255,255,0.15)",
-            font=dict(color="rgba(255,255,255,0.85)", size=12),
-        ),
+        yaxis=dict(showgrid=False, zeroline=False, side="left",
+                   tickfont=dict(size=11, color=_c["text_muted"])),
         height=180,
         margin=dict(t=8, b=8, l=40, r=8),
-    )
-    st.plotly_chart(fig_heat, width="stretch", theme="streamlit")
+    ))
+    st.plotly_chart(fig_heat, width="stretch", theme=None)
 else:
     st.info("No practice data yet.")
 
@@ -532,7 +499,7 @@ with col_donut:
             font=dict(size=11),
             showarrow=False,
         )
-        fig_donut.update_layout(
+        fig_donut.update_layout(**build_plotly_layout(_c,
             showlegend=True,
             legend=dict(
                 orientation="h",
@@ -540,12 +507,10 @@ with col_donut:
                 xanchor="center", x=0.5,
                 bgcolor="rgba(0,0,0,0)",
             ),
-            hoverlabel=dict(bgcolor="#1A202C", bordercolor="rgba(255,255,255,0.15)",
-                            font=dict(color="rgba(255,255,255,0.85)", size=12)),
             height=280,
             margin=dict(t=8, b=8, l=8, r=8),
-        )
-        st.plotly_chart(fig_donut, width="stretch", theme="streamlit")
+        ))
+        st.plotly_chart(fig_donut, width="stretch", theme=None)
     else:
         st.info("No vocab items found for the selected source.")
 
@@ -589,14 +554,14 @@ with col_hard:
             ),
             customdata=hard_df["attempts_window"],
         ))
-        fig_hard.update_layout(**_chart_layout(
+        fig_hard.update_layout(**build_plotly_layout(_c,
             xaxis=dict(range=[0, 118], ticksuffix="%", title=""),
             yaxis=dict(autorange="reversed", showgrid=False, tickfont=dict(size=11)),
             bargap=0.3,
             height=280,
-            margin=dict(l=4, r=48, t=8, b=4),
+            margin=dict(r=48, t=8, b=4),
         ))
-        st.plotly_chart(fig_hard, width="stretch", theme="streamlit")
+        st.plotly_chart(fig_hard, width="stretch", theme=None)
     else:
         st.info("Not enough practice data yet (need ≥ 2 attempts per item).")
 
@@ -653,13 +618,13 @@ with col_dist:
             marker=dict(color=dist_df["color"].tolist(), line=dict(width=0)),
             hovertemplate="<b>%{x}</b><br>%{y} words<extra></extra>",
         ))
-        fig_dist.update_layout(**_chart_layout(
+        fig_dist.update_layout(**build_plotly_layout(_c,
             xaxis=dict(title="Accuracy bucket", tickangle=-30, tickfont=dict(size=10)),
             yaxis=dict(title="Words"),
             bargap=0.15,
             height=280,
         ))
-        st.plotly_chart(fig_dist, width="stretch", theme="streamlit")
+        st.plotly_chart(fig_dist, width="stretch", theme=None)
         st.markdown(
             '<div style="font-size:0.7rem;color:color-mix(in srgb, var(--text-color) 25%, transparent);margin-top:-0.5rem;">'
             'Words with ≥ 2 attempts, grouped by accuracy bucket.</div>',
@@ -712,14 +677,14 @@ with col_lat:
             ),
             customdata=lat_df["Attempts"],
         ))
-        fig_lat.update_layout(**_chart_layout(
+        fig_lat.update_layout(**build_plotly_layout(_c,
             xaxis=dict(title="Avg response time (seconds)", ticksuffix="s"),
             yaxis=dict(autorange="reversed", showgrid=False),
             bargap=0.3,
             height=280,
-            margin=dict(l=4, r=48, t=8, b=4),
+            margin=dict(r=48, t=8, b=4),
         ))
-        st.plotly_chart(fig_lat, width="stretch", theme="streamlit")
+        st.plotly_chart(fig_lat, width="stretch", theme=None)
         st.markdown(
             '<div style="font-size:0.7rem;color:color-mix(in srgb, var(--text-color) 25%, transparent);margin-top:-0.5rem;">'
             'Average time between receiving a question and submitting an answer.</div>',

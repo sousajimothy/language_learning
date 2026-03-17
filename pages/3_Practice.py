@@ -21,7 +21,9 @@ from german_pipeline import grade as grade_module
 from ui_utils import (
     MODE_ALLOWED_TYPES,
     auto_resolve_source,
+    build_plotly_layout,
     get_db_path,
+    get_plotly_colors,
     list_sources,
     open_db,
 )
@@ -765,32 +767,17 @@ elif phase == "summary":
                 marker_line_width=0,
             ),
         ])
-        fig.update_layout(
+        _c = get_plotly_colors()
+        fig.update_layout(**build_plotly_layout(_c,
             barmode="stack",
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            font=dict(color="rgba(255,255,255,0.6)", size=12),
-            xaxis=dict(
-                gridcolor="rgba(255,255,255,0.06)",
-                tickfont=dict(size=11),
-            ),
-            yaxis=dict(
-                gridcolor="rgba(255,255,255,0.06)",
-                tickfont=dict(size=11),
-                title="Questions",
-            ),
-            legend=dict(
-                orientation="h",
-                yanchor="bottom",
-                y=1.02,
-                xanchor="right",
-                x=1,
-                font=dict(size=11),
-            ),
+            font=dict(size=12),
+            xaxis=dict(tickfont=dict(size=11, color=_c["text_muted"])),
+            yaxis=dict(title="Questions", tickfont=dict(size=11, color=_c["text_muted"])),
+            legend=dict(font=dict(size=11)),
             height=300,
             margin=dict(l=0, r=0, t=32, b=0),
-        )
-        st.plotly_chart(fig, width="stretch")
+        ))
+        st.plotly_chart(fig, width="stretch", theme=None)
 
     # ── Actions ───────────────────────────────────────────────────────
     st.markdown('<div style="height:0.25rem"></div>', unsafe_allow_html=True)
