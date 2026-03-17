@@ -240,7 +240,7 @@ if worst_rows:
         yaxis=dict(autorange="reversed", showgrid=False, zeroline=False),
         bargap=0.28,
         height=max(220, len(chart_df) * 28),
-        margin=dict(l=4, r=52, t=8, b=4),
+        margin=dict(r=52, t=8, b=4),
     ))
     st.plotly_chart(fig, width="stretch", theme=None)
 

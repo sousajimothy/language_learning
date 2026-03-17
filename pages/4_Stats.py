@@ -559,7 +559,7 @@ with col_hard:
             yaxis=dict(autorange="reversed", showgrid=False, tickfont=dict(size=11)),
             bargap=0.3,
             height=280,
-            margin=dict(l=4, r=48, t=8, b=4),
+            margin=dict(r=48, t=8, b=4),
         ))
         st.plotly_chart(fig_hard, width="stretch", theme=None)
     else:
@@ -682,7 +682,7 @@ with col_lat:
             yaxis=dict(autorange="reversed", showgrid=False),
             bargap=0.3,
             height=280,
-            margin=dict(l=4, r=48, t=8, b=4),
+            margin=dict(r=48, t=8, b=4),
         ))
         st.plotly_chart(fig_lat, width="stretch", theme=None)
         st.markdown(

@@ -106,7 +106,20 @@ def get_plotly_colors() -> dict:
     try:
         is_dark = st.context.theme.type == "dark"
     except Exception:
-        is_dark = True  # safe fallback if context unavailable
+        is_dark = None  # context unavailable — use neutral fallback
+
+    if is_dark is None:
+        # Cannot determine theme; return a neutral mid-contrast palette
+        # that is at least partially legible on both backgrounds.
+        return dict(
+            text         = "rgba(128,128,128,0.95)",
+            text_muted   = "rgba(128,128,128,0.70)",
+            grid         = "rgba(128,128,128,0.12)",
+            zeroline     = "rgba(128,128,128,0.20)",
+            hover_bg     = "#E2E8F0",
+            hover_border = "rgba(128,128,128,0.20)",
+            hover_text   = "rgba(50,50,50,0.90)",
+        )
 
     if is_dark:
         return dict(
@@ -129,6 +142,17 @@ def get_plotly_colors() -> dict:
     )
 
 
+def _deep_merge(base: dict, override: dict) -> dict:
+    """Recursively merge *override* into *base*; override wins on conflicts."""
+    merged = dict(base)
+    for k, v in override.items():
+        if isinstance(v, dict) and isinstance(merged.get(k), dict):
+            merged[k] = _deep_merge(merged[k], v)
+        else:
+            merged[k] = v
+    return merged
+
+
 def build_plotly_layout(c: dict | None = None, **overrides) -> dict:
     """Return a complete, theme-correct Plotly layout dict.
 
@@ -138,9 +162,10 @@ def build_plotly_layout(c: dict | None = None, **overrides) -> dict:
            figures should pass the same palette to avoid repeated context
            lookups.
         **overrides: Any layout key that should differ from the base (e.g.
-           ``height=300``, ``barmode="stack"``).  Top-level dict values are
-           *shallow-merged* so that structural keys in the base (e.g.
-           ``xaxis.zeroline``) are preserved alongside caller additions.
+           ``height=300``, ``barmode="stack"``).  Dict values are
+           *deep-merged* so that nested theme colours (e.g.
+           ``xaxis.tickfont.color``) are preserved when callers only
+           override sibling keys like ``tickfont.size``.
     """
     if c is None:
         c = get_plotly_colors()
@@ -150,16 +175,18 @@ def build_plotly_layout(c: dict | None = None, **overrides) -> dict:
         plot_bgcolor       = "rgba(0,0,0,0)",
         font               = dict(color=c["text"]),
         xaxis = dict(
-            zeroline  = False,
-            gridcolor = c["grid"],
-            tickfont  = dict(color=c["text_muted"]),
-            title     = dict(font=dict(color=c["text_muted"])),
+            zeroline   = False,
+            gridcolor  = c["grid"],
+            tickfont   = dict(color=c["text_muted"]),
+            title      = dict(font=dict(color=c["text_muted"])),
+            automargin = True,
         ),
         yaxis = dict(
-            zeroline  = False,
-            gridcolor = c["grid"],
-            tickfont  = dict(color=c["text_muted"]),
-            title     = dict(font=dict(color=c["text_muted"])),
+            zeroline   = False,
+            gridcolor  = c["grid"],
+            tickfont   = dict(color=c["text_muted"]),
+            title      = dict(font=dict(color=c["text_muted"])),
+            automargin = True,
         ),
         legend = dict(
             orientation = "h",
@@ -174,13 +201,13 @@ def build_plotly_layout(c: dict | None = None, **overrides) -> dict:
             bordercolor = c["hover_border"],
             font        = dict(color=c["hover_text"], size=12),
         ),
-        margin             = dict(l=4, r=4, t=36, b=4),
+        margin             = dict(l=8, r=8, t=36, b=8),
         annotationdefaults = dict(font=dict(color=c["text"])),
     )
 
     for k, v in overrides.items():
         if isinstance(v, dict) and isinstance(base.get(k), dict):
-            base[k] = {**base[k], **v}
+            base[k] = _deep_merge(base[k], v)
         else:
             base[k] = v
 
