@@ -12,7 +12,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from german_pipeline import storage
-from ui_utils import cutoff_iso, get_db_path, list_sources, open_db
+from ui_utils import build_plotly_layout, cutoff_iso, get_db_path, get_plotly_colors, list_sources, open_db
 
 # ---------------------------------------------------------------------------
 # CSS
@@ -349,6 +349,7 @@ if "ep_pack_df" in st.session_state:
     both_n        = len(overlap)
 
     if worst_only_n + missed_only_n + both_n > 0:
+        _c = get_plotly_colors()
         fig_comp = go.Figure(go.Pie(
             labels=["📉 Worst only", "🔁 Missed only", "⚡ Both"],
             values=[worst_only_n, missed_only_n, both_n],
@@ -358,43 +359,37 @@ if "ep_pack_df" in st.session_state:
                 line=dict(color="rgba(0,0,0,0)", width=0),
             ),
             textinfo="label+value",
-            textfont=dict(size=12, color="rgba(255,255,255,0.75)"),
+            textfont=dict(size=12, color=_c["text_muted"]),
             hovertemplate="%{label}: <b>%{value}</b> items (%{percent})<extra></extra>",
             sort=False,
         ))
         fig_comp.add_annotation(
             text=f"<b>{len(pack_df)}</b>",
             x=0.5, y=0.58,
-            font=dict(size=28, color="#fff"),
+            font=dict(size=28),
             showarrow=False,
         )
         fig_comp.add_annotation(
             text="items",
             x=0.5, y=0.42,
-            font=dict(size=12, color="rgba(255,255,255,0.3)"),
+            font=dict(size=12, color=_c["text_muted"]),
             showarrow=False,
         )
-        fig_comp.update_layout(
-            paper_bgcolor="rgba(0,0,0,0)",
+        fig_comp.update_layout(**build_plotly_layout(_c,
             showlegend=True,
             legend=dict(
                 orientation="h",
                 yanchor="top", y=-0.02,
                 xanchor="center", x=0.5,
-                font=dict(size=11, color="rgba(255,255,255,0.45)"),
+                font=dict(size=11),
                 bgcolor="rgba(0,0,0,0)",
-            ),
-            hoverlabel=dict(
-                bgcolor="#1A202C",
-                bordercolor="rgba(255,255,255,0.12)",
-                font=dict(color="rgba(255,255,255,0.85)", size=12),
             ),
             height=260,
             margin=dict(t=8, b=8, l=8, r=8),
-        )
+        ))
         _, col_chart, _ = st.columns([1, 2, 1])
         with col_chart:
-            st.plotly_chart(fig_comp, width="stretch")
+            st.plotly_chart(fig_comp, width="stretch", theme=None)
 
     # ── Preview table ─────────────────────────────────────────────────────────
     st.markdown('<div class="section-lbl">Preview</div>', unsafe_allow_html=True)
