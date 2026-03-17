@@ -126,9 +126,46 @@ CREATE UNIQUE INDEX IF NOT EXISTS uq_imports_source_path_mtime
     WHERE file_hash IS NULL;
 """
 
+_DDL_CONVERSATIONS = """
+CREATE TABLE IF NOT EXISTS conversations (
+    id          INTEGER PRIMARY KEY,
+    title       TEXT    NOT NULL,
+    created_at  TEXT    NOT NULL,
+    updated_at  TEXT    NOT NULL
+);
+"""
+
+_DDL_CHAT_MESSAGES = """
+CREATE TABLE IF NOT EXISTS chat_messages (
+    id              INTEGER PRIMARY KEY,
+    conversation_id INTEGER NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+    role            TEXT    NOT NULL,
+    content         TEXT,
+    tool_calls_json TEXT,
+    tool_call_id    TEXT,
+    created_at      TEXT    NOT NULL
+);
+"""
+
+_DDL_CHAT_MESSAGES_IDX = """
+CREATE INDEX IF NOT EXISTS idx_chatmsg_conv
+    ON chat_messages(conversation_id, created_at);
+"""
+
+_DDL_CHAT_UPDATE_TRIGGER = """
+CREATE TRIGGER IF NOT EXISTS trg_chat_update_conv
+AFTER INSERT ON chat_messages
+BEGIN
+    UPDATE conversations SET updated_at = strftime('%Y-%m-%dT%H:%M:%S', 'now')
+    WHERE id = NEW.conversation_id;
+END;
+"""
+
 _ALL_DDL = [
     _DDL_VOCAB_ITEMS, _DDL_EXAMPLES, _DDL_ATTEMPTS,
     _DDL_IMPORTS, _DDL_IMPORTS_IDX_HASH, _DDL_IMPORTS_IDX_PATH,
+    _DDL_CONVERSATIONS, _DDL_CHAT_MESSAGES,
+    _DDL_CHAT_MESSAGES_IDX, _DDL_CHAT_UPDATE_TRIGGER,
 ]
 
 
@@ -881,3 +918,118 @@ def select_practice_items(
     items.sort(key=lambda it: (-pri_map[it["id"]], last_map[it["id"]]))
 
     return items[:n]
+
+
+# ---------------------------------------------------------------------------
+# Chat / conversation CRUD
+# ---------------------------------------------------------------------------
+
+def create_conversation(con: sqlite3.Connection, title: str) -> int:
+    """Insert a new conversation and return its ``id``."""
+    now = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    cur = con.execute(
+        "INSERT INTO conversations (title, created_at, updated_at) "
+        "VALUES (?, ?, ?)",
+        (title, now, now),
+    )
+    con.commit()
+    return cur.lastrowid
+
+
+def save_message(
+    con: sqlite3.Connection,
+    conversation_id: int,
+    role: str,
+    content: str | None,
+    *,
+    tool_calls_json: str | None = None,
+    tool_call_id: str | None = None,
+) -> int:
+    """Insert a chat message and return its ``id``.
+
+    The ``trg_chat_update_conv`` trigger automatically updates the
+    parent conversation's ``updated_at`` timestamp.
+    """
+    now = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    cur = con.execute(
+        "INSERT INTO chat_messages "
+        "(conversation_id, role, content, tool_calls_json, tool_call_id, created_at) "
+        "VALUES (?, ?, ?, ?, ?, ?)",
+        (conversation_id, role, content, tool_calls_json, tool_call_id, now),
+    )
+    con.commit()
+    return cur.lastrowid
+
+
+def load_messages(con: sqlite3.Connection, conversation_id: int) -> list[dict]:
+    """Return all messages for a conversation, ordered by creation time."""
+    old_factory = con.row_factory
+    con.row_factory = sqlite3.Row
+    try:
+        rows = con.execute(
+            "SELECT id, role, content, tool_calls_json, tool_call_id, created_at "
+            "FROM chat_messages "
+            "WHERE conversation_id = ? "
+            "ORDER BY created_at, id",
+            (conversation_id,),
+        ).fetchall()
+    finally:
+        con.row_factory = old_factory
+    return [dict(row) for row in rows]
+
+
+def list_conversations(
+    con: sqlite3.Connection, max_age_days: int = 30
+) -> list[dict]:
+    """Return conversations updated within *max_age_days*, newest first."""
+    cutoff = (
+        datetime.now(timezone.utc) - timedelta(days=max_age_days)
+    ).replace(microsecond=0).isoformat()
+    old_factory = con.row_factory
+    con.row_factory = sqlite3.Row
+    try:
+        rows = con.execute(
+            "SELECT id, title, created_at, updated_at "
+            "FROM conversations "
+            "WHERE updated_at >= ? "
+            "ORDER BY updated_at DESC",
+            (cutoff,),
+        ).fetchall()
+    finally:
+        con.row_factory = old_factory
+    return [dict(row) for row in rows]
+
+
+def update_conversation_title(
+    con: sqlite3.Connection, conversation_id: int, title: str
+) -> None:
+    """Update the title of an existing conversation."""
+    con.execute(
+        "UPDATE conversations SET title = ? WHERE id = ?",
+        (title, conversation_id),
+    )
+    con.commit()
+
+
+def delete_conversation(con: sqlite3.Connection, conversation_id: int) -> None:
+    """Delete a conversation and all its messages (``ON DELETE CASCADE``)."""
+    con.execute("DELETE FROM conversations WHERE id = ?", (conversation_id,))
+    con.commit()
+
+
+def purge_old_conversations(
+    con: sqlite3.Connection, max_age_days: int = 5
+) -> int:
+    """Hard-delete conversations not updated within *max_age_days*.
+
+    Returns the number of conversations deleted.  Child ``chat_messages``
+    rows are removed automatically via ``ON DELETE CASCADE``.
+    """
+    cutoff = (
+        datetime.now(timezone.utc) - timedelta(days=max_age_days)
+    ).replace(microsecond=0).isoformat()
+    cur = con.execute(
+        "DELETE FROM conversations WHERE updated_at < ?", (cutoff,),
+    )
+    con.commit()
+    return cur.rowcount
