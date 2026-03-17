@@ -223,7 +223,7 @@ div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
 /* ── Stat card (summary row) ──────────────────────────────── */
 .stat-card-sm {
     background: var(--secondary-background-color);
-    border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent);
+    border: 1.5px solid rgba(128,128,128,0.40);
     border-radius: 8px;
     padding: 0.8rem 1rem;
     text-align: center;
