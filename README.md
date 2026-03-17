@@ -1,60 +1,125 @@
-# Language Learning – Anki Vocab Export
+# 🇩🇪 German Language Learning
 
-See [CLAUDE.md](CLAUDE.md) for environment setup and the core workflow overview.
-
-## Caching
-
-The export pipeline includes automatic cache validation to improve performance. Cached `.xlsx` files older than 24 hours are treated as stale and will trigger a fresh OpenAI API call. Use the cache management utilities in `src/cache_utils.py` to:
-
-- **Check cache age**: `is_cache_valid(file_path)` — Returns `True` if the cache is still fresh
-- **Clear old caches**: `clear_old_cache(directory)` — Removes files older than 72 hours (configurable)
+A personal Streamlit app for building and drilling a German vocabulary database, backed by GPT-4o enrichment and a local SQLite practice engine.
 
 ---
 
-## Golden outputs (regression baseline)
+## Overview
 
-### What are the golden files?
+Raw German words or phrases are pasted in, enriched by GPT-4o (article, English translation, Afrikaans translation, word type / notes), and stored in a local SQLite database. From there, the app supports spaced-repetition-style drilling, performance analytics, targeted study-pack generation, and export to multiple formats.
 
-The files in `output/golden/` are reference outputs that represent the expected
-results of the pipeline for a known input. They serve as a regression baseline:
-if the pipeline is changed, you can re-run it against the same input and compare
-the new output to the golden files to detect unintended changes in behaviour.
+---
 
-| File | Description |
-|------|-------------|
-| `output/golden/2026-02-24_10-23_anki_vocab_export.tsv` | Anki-ready two-column export |
-| `output/golden/2026-02-24_10-23_full_vocab_export.xlsx` | Full vocabulary table (also used as API cache) |
+## Pages
 
-### Which input do they correspond to?
+| # | Page | Purpose |
+|---|------|---------|
+| 🏠 | **Home** | Dashboard — live stats (words, attempts, accuracy), quick-start cards |
+| 1 | **Vocab Export** | Paste raw words → GPT-4o enrichment → preview cards → export or import to DB |
+| 2 | **Import** | Upload a vocabulary file (XLSX / CSV / TSV) and import it into the practice DB |
+| 3 | **Practice** | Interactive drill sessions — multiple-choice and typed-answer modes |
+| 4 | **Stats** | Performance charts — accuracy over time, drill-type breakdown |
+| 5 | **Report** | Worst-performing items report with Plotly charts |
+| 6 | **Export Pack** | Generate a focused study pack (TSV / CSV) from weakest items |
+| 7 | **AI Agent** | Chat with GPT-4o about your vocabulary DB — find words by theme, surface weak spots |
 
-Both golden files were produced from:
+---
 
-```
-input/samples/teams_sample_01.txt
-```
+## Export Formats (Vocab Export page)
 
-That file contains a list of German words and phrases (one per line) that were
-pasted into the pipeline as `raw_text`.
+| Format | Use case |
+|--------|----------|
+| **TSV** | Anki import — two-column (Front / Back), headerless |
+| **CSV** | Excel / Google Sheets / data tools — UTF-8 with BOM |
+| **XLSX** | Full vocabulary table — all 5 fields, opens in Excel |
+| **Markdown** | GFM pipe table — paste into Obsidian, a README, or any Markdown editor |
+| **DOCX** | Formatted Word document — landscape A4, styled table, ready to share or print |
+| **PDF** | Formatted PDF — landscape A4, styled table, ready to print or share |
 
-### How to regenerate the golden outputs
+---
 
-Use the helper script, which reads `input/samples/teams_sample_01.txt` directly
-and overwrites the golden files in-place:
+## Setup
+
+**Requirements:** [micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html) and an OpenAI API key.
 
 ```bash
-# From the repo root
-bash scripts/regen_golden.sh
+# Create and activate the environment
+micromamba env create -f environment.yml
+micromamba activate language_learning_env
+
+# Add your API key
+echo "OPENAI_API_KEY=sk-..." > .env
+
+# Run the app
+micromamba run -n language_learning_env streamlit run app.py
 ```
 
-The script will:
-1. Load `OPENAI_API_KEY` from `.env` (or use it if already exported)
-2. Read and clean `input/samples/teams_sample_01.txt`
-3. Call the GPT-4o API with the same prompt used by the main pipeline
-4. Write the results directly to `output/golden/`, overwriting both files
+---
 
-> **Note:** Each run makes a live OpenAI API call and will incur usage costs.
-> The script does **not** use the `.xlsx` caching logic from the main pipeline
-> so that the golden files always reflect a fresh API response.
+## Project Structure
+
+```
+app.py                      # Streamlit entry point + home page
+pages/
+  1_Vocab_Export.py         # GPT-4o enrichment + 6-format export
+  2_Import.py               # File upload → DB import
+  3_Practice.py             # Drill session (MCQ + typed-answer)
+  4_Stats.py                # Performance charts
+  5_Report.py               # Worst-performers report
+  6_Export_Pack.py          # Weak-item study pack generator
+  7_AI_Agent.py             # GPT-4o chat agent with DB tool calls
+german_pipeline/
+  storage.py                # SQLite schema, CRUD, stats queries
+  drills.py                 # MCQ and typed-answer drill logic
+  grade.py                  # Answer grading helpers
+  ingest_export.py          # File parsing + DB import pipeline
+  agent.py                  # Agent tool definitions + run_chat()
+src/
+  anki_vocab_export.py      # Standalone script version of the pipeline
+  vocab_export_core.py      # GPT-4o enrichment core (used by pages)
+  cache_utils.py            # .xlsx cache validation helpers
+assets/
+  fonts/                    # Bundled DejaVu Sans TTF (PDF Unicode rendering)
+input/
+  samples/                  # Sample word lists for testing / golden outputs
+output/
+  golden/                   # Reference outputs for regression testing
+  add/                      # Manually curated TSV files by card type
+scripts/
+  regen_golden.sh           # Regenerate or verify golden output files
+tests/                      # Smoke tests and integration tests
+ui_utils.py                 # Shared Streamlit helpers (sidebar, DB, charts)
+```
+
+---
+
+## Database Schema
+
+SQLite database at `output/german.db` (gitignored).
+
+| Table | Description |
+|-------|-------------|
+| `vocab_items` | Core vocabulary — `de`, `de_mit_artikel`, `en`, `af`, `notes`, `word_type`, `source` |
+| `attempts` | Every drill attempt — `vocab_id`, `drill_type`, `is_correct`, `latency_ms`, `error_tags` |
+| `examples` | GPT-generated example sentences per vocab item |
+| `conversations` | AI Agent conversation history |
+| `chat_messages` | Individual chat messages with tool-call payloads |
+
+---
+
+## Golden Outputs (Regression Baseline)
+
+`output/golden/` contains reference exports produced from `input/samples/teams_sample_01.txt`. Use them to verify the pipeline hasn't changed behaviour unexpectedly.
+
+```bash
+# Regenerate golden files (live API call, incurs cost)
+bash scripts/regen_golden.sh
+
+# Structural verification without overwriting
+bash scripts/regen_golden.sh --verify
+```
+
+Verification checks row count, column names, and source word coverage. Exact diffing is intentionally skipped — GPT-4o is non-deterministic.
 
 <details>
 <summary>Manual fallback (if the helper script is not available)</summary>
@@ -64,50 +129,29 @@ The script will:
    micromamba activate language_learning_env
    ```
 
-2. Open `src/anki_vocab_export.py` (or the canonical notebook
-   `notebooks/2026-06-26_anki_vocab_export_clean.ipynb`).
+2. Copy the contents of `input/samples/teams_sample_01.txt` and paste them as
+   the value of `raw_text` in `src/anki_vocab_export.py`.
 
-3. Copy the contents of `input/samples/teams_sample_01.txt` and paste them as
-   the value of `raw_text` in the script/notebook.
-
-4. Run the script:
+3. Run the script:
    ```bash
    micromamba run -n language_learning_env python src/anki_vocab_export.py
    ```
-   Or run all cells in the notebook top-to-bottom.
 
-5. The pipeline writes two timestamped files to `output/`:
-   ```
-   output/YYYY-MM-DD_HH-MM_anki_vocab_export.tsv
-   output/YYYY-MM-DD_HH-MM_full_vocab_export.xlsx
-   ```
+4. Copy the timestamped output files into `output/golden/` with the canonical filenames.
 
-6. Copy them into `output/golden/` with the canonical golden filenames:
-   ```bash
-   cp output/YYYY-MM-DD_HH-MM_anki_vocab_export.tsv \
-      output/golden/2026-02-24_10-23_anki_vocab_export.tsv
-   cp output/YYYY-MM-DD_HH-MM_full_vocab_export.xlsx \
-      output/golden/2026-02-24_10-23_full_vocab_export.xlsx
-   ```
 </details>
 
-### How to verify regeneration
+---
 
-Use the `--verify` flag to generate output in a temporary directory and compare
-it structurally against the current golden files **without overwriting them**:
+## Environment
 
-```bash
-bash scripts/regen_golden.sh --verify
-```
+Dependencies are managed via `environment.yml`. Key packages:
 
-The verify run checks:
-- **Row count** — same number of vocabulary items as the golden TSV
-- **Column names** — XLSX columns are identical to the golden XLSX
-- **Deutsch values** — every source German phrase is present in the output
-- **TSV diff** — shown as informational output for human review
+- `streamlit>=1.35` — UI framework
+- `openai` — GPT-4o API client
+- `python-docx` — DOCX export
+- `fpdf2` — PDF export (Unicode via bundled DejaVu Sans)
+- `plotly>=5.0` — Charts
+- `pandas`, `openpyxl` — Data handling and XLSX I/O
 
-> **Why not an exact diff?**  GPT-4o is non-deterministic; translations and
-> `Hinweise` wording vary between runs. The structural checks above confirm that
-> the pipeline is working correctly without being brittle to phrasing changes.
-
-Exit codes: `0` = structural checks passed, `1` = at least one check failed.
+See [CLAUDE.md](CLAUDE.md) for Claude Code–specific guidance on working with this codebase.
