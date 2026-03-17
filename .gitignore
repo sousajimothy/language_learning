@@ -16,6 +16,10 @@ env/
 # ── Secrets & config ──────────────────────────────────────────────────────────
 .env
 
+# ── Claude Code local config (user-specific, not project code) ────────────────
+.claude/
+!CLAUDE.md
+
 # ── Generated output (exports, databases) ─────────────────────────────────────
 # Timestamped exports produced by the pipeline
 output/*_anki_vocab_export.tsv
