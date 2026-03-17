@@ -303,11 +303,12 @@ def home_page() -> None:
         ("📊", "Stats",         "Accuracy trends, performance heatmaps, and vocabulary analytics.",    "pages/4_Stats.py"),
         ("📋", "Report",        "Worst-performing items with breakdown by drill type.",                "pages/5_Report.py"),
         ("📦", "Export Pack",   "Generate a focused study pack from your weakest-scored items.",       "pages/6_Export_Pack.py"),
+        ("🤖", "AI Agent",     "Chat with an AI assistant about your German vocabulary and progress.", "pages/7_AI_Agent.py"),
     ]
 
-    row1, row2 = pages[:3], pages[3:]
+    row1, row2, row3 = pages[:3], pages[3:6], pages[6:]
 
-    for row in (row1, row2):
+    for row in (row1, row2, row3):
         cols = st.columns(3, gap="medium")
         for col, (icon, title, desc, path) in zip(cols, row):
             with col:
@@ -334,6 +335,7 @@ pg = st.navigation([
     st.Page("pages/4_Stats.py",          title="Stats",        icon="📊"),
     st.Page("pages/5_Report.py",         title="Report",       icon="📋"),
     st.Page("pages/6_Export_Pack.py",    title="Export Pack",  icon="📦"),
+    st.Page("pages/7_AI_Agent.py",     title="AI Agent",     icon="🤖"),
 ])
 
 pg.run()
