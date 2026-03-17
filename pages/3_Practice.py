@@ -223,7 +223,7 @@ div[data-testid="stRadio"] div[role="radiogroup"] label:hover {
 /* ── Stat card (summary row) ──────────────────────────────── */
 .stat-card-sm {
     background: var(--secondary-background-color);
-    border: 1px solid color-mix(in srgb, var(--text-color) 18%, transparent);
+    border: 1.5px solid rgba(128,128,128,0.40);
     border-radius: 8px;
     padding: 0.8rem 1rem;
     text-align: center;
@@ -306,7 +306,7 @@ if phase == "config":
         if mode:
             _, _, desc = MODE_META[mode]
             st.markdown(
-                f'<div style="font-size:0.78rem;color:rgba(255,255,255,0.35);'
+                f'<div style="font-size:0.78rem;color:color-mix(in srgb, var(--text-color) 35%, transparent);'
                 f'margin:-0.15rem 0 0.25rem;padding:0 0.15rem;">{desc}</div>',
                 unsafe_allow_html=True,
             )
@@ -453,7 +453,7 @@ elif phase == "question":
 
         if drill_type == "cloze":
             st.markdown(
-                '<div style="font-size:0.75rem;color:rgba(255,255,255,0.35);'
+                '<div style="font-size:0.75rem;color:color-mix(in srgb, var(--text-color) 35%, transparent);'
                 'text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.5rem;">'
                 'Fill in the blank</div>',
                 unsafe_allow_html=True,
@@ -622,7 +622,7 @@ elif phase == "answer":
         f'<div class="result-card" style="background:{bg};border:1px solid {border};">'
         f'<div class="result-icon">{icon}</div>'
         f'<div class="result-label" style="color:{label_color};">{label}</div>'
-        f'<div class="result-answer" style="color:rgba(255,255,255,0.88);">{gold_html}</div>'
+        f'<div class="result-answer" style="color:var(--text-color);">{gold_html}</div>'
         f'{your_html}'
         f'</div>',
         unsafe_allow_html=True,
