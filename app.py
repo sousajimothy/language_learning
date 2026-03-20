@@ -304,6 +304,7 @@ def home_page() -> None:
         ("📋", "Report",        "Worst-performing items with breakdown by drill type.",                "pages/5_Report.py"),
         ("📦", "Export Pack",   "Generate a focused study pack from your weakest-scored items.",       "pages/6_Export_Pack.py"),
         ("🤖", "AI Agent",     "Chat with an AI assistant about your German vocabulary and progress.", "pages/7_AI_Agent.py"),
+        ("💡", "Explainers",  "Interactive grammar widgets — start with Konjunktiv II.",              "pages/8_Explainers.py"),
     ]
 
     row1, row2, row3 = pages[:3], pages[3:6], pages[6:]
@@ -336,6 +337,7 @@ pg = st.navigation([
     st.Page("pages/5_Report.py",         title="Report",       icon="📋"),
     st.Page("pages/6_Export_Pack.py",    title="Export Pack",  icon="📦"),
     st.Page("pages/7_AI_Agent.py",     title="AI Agent",     icon="🤖"),
+    st.Page("pages/8_Explainers.py",  title="Explainers",  icon="💡"),
 ])
 
 pg.run()
