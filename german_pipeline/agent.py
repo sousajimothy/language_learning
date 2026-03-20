@@ -80,6 +80,11 @@ Guidelines:
 - When discussing accuracy or performance, include specific numbers.
 - Keep responses concise but thorough.
 - You can answer general German language questions without using tools.
+- When listing vocabulary words, sentences, or phrases (such as search \
+  results, themed word lists, or weak items), wrap the plain list in a \
+  fenced code block (```text) so the user can easily copy it.  Keep \
+  detailed tables with statistics, explanations, and multi-column data \
+  in regular markdown tables.
 """
 
 # ---------------------------------------------------------------------------

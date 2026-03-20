@@ -13,11 +13,15 @@ after 5 days based on ``updated_at``.
 
 from __future__ import annotations
 
+import base64
+import html as html_lib
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 from german_pipeline import storage
 from german_pipeline.agent import ChatResult, run_chat
@@ -47,6 +51,20 @@ def _inject_css() -> None:
     padding: 0.4rem 0.5rem;
     border-radius: 6px;
     background: color-mix(in srgb, var(--text-color) 4%, transparent);
+}
+
+/* Attachment preview chip */
+.attach-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: color-mix(in srgb, var(--text-color) 6%, transparent);
+    border: 1px solid color-mix(in srgb, var(--text-color) 15%, transparent);
+    border-radius: 8px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.78rem;
+    color: color-mix(in srgb, var(--text-color) 70%, transparent);
+    margin: 0.2rem 0 0.5rem;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -101,6 +119,8 @@ if "chat_conv_id" not in st.session_state:
     st.session_state["chat_conv_id"] = None
 if "chat_messages" not in st.session_state:
     st.session_state["chat_messages"] = []
+if "_upload_counter" not in st.session_state:
+    st.session_state["_upload_counter"] = 0
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -230,6 +250,88 @@ def _build_openai_messages(db_messages: list[dict]) -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
+# Message rendering helpers — copy buttons & code block extraction
+# ---------------------------------------------------------------------------
+
+_CODE_FENCE_RE = re.compile(r"(```[^\n]*\n.*?\n```)", re.DOTALL)
+
+#: Max image upload size in megabytes.
+_MAX_UPLOAD_MB = 5
+_ACCEPTED_IMAGE_TYPES = ["jpg", "jpeg", "png", "gif", "webp"]
+
+
+def _render_message_content(content: str) -> None:
+    """Render markdown with fenced code blocks extracted to ``st.code()``.
+
+    ``st.code()`` provides Streamlit's built-in copy button on each block,
+    while the surrounding prose is rendered as normal markdown.
+    """
+    parts = _CODE_FENCE_RE.split(content)
+    for part in parts:
+        stripped = part.strip()
+        if not stripped:
+            continue
+        if stripped.startswith("```"):
+            try:
+                first_nl = stripped.index("\n")
+            except ValueError:
+                st.markdown(stripped)
+                continue
+            lang = stripped[3:first_nl].strip() or None
+            body = stripped[first_nl + 1:]
+            if body.endswith("\n```"):
+                body = body[:-4]
+            elif body.endswith("```"):
+                body = body[:-3]
+            st.code(body, language=lang)
+        else:
+            st.markdown(stripped)
+
+
+def _copy_button(text: str, key: str) -> None:
+    """Render a compact copy-to-clipboard button via an HTML component."""
+    safe_text = html_lib.escape(text)
+    components.html(
+        f"""
+        <style>
+            * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+            body {{ background: transparent; }}
+            .cb {{
+                all: unset;
+                cursor: pointer;
+                font-size: 11.5px;
+                color: rgba(128,128,128,0.55);
+                padding: 1px 9px;
+                border: 1px solid rgba(128,128,128,0.18);
+                border-radius: 5px;
+                transition: all 0.15s;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            }}
+            .cb:hover {{
+                color: rgba(128,128,128,0.85);
+                background: rgba(128,128,128,0.08);
+                border-color: rgba(128,128,128,0.3);
+            }}
+        </style>
+        <textarea id="ct"
+                  style="position:fixed;opacity:0;pointer-events:none;left:-9999px"
+        >{safe_text}</textarea>
+        <button class="cb" onclick="
+            var t=document.getElementById('ct');
+            t.style.cssText='position:fixed;left:0;top:0;opacity:0.01';
+            t.select(); t.setSelectionRange(0,999999);
+            document.execCommand('copy');
+            t.style.cssText='position:fixed;opacity:0;pointer-events:none;left:-9999px';
+            this.textContent='\u2713 Copied';
+            setTimeout(()=>this.textContent='\U0001f4cb Copy',1500);
+        ">\U0001f4cb Copy</button>
+        """,
+        height=30,
+        key=key,
+    )
+
+
+# ---------------------------------------------------------------------------
 # Sidebar — conversation list + controls
 # ---------------------------------------------------------------------------
 
@@ -335,10 +437,50 @@ with st.sidebar:
     )
 
 # ---------------------------------------------------------------------------
-# Main area — header
+# Main area — header + attach
 # ---------------------------------------------------------------------------
 
-st.markdown("## 🤖 AI Agent")
+_hdr_left, _hdr_right = st.columns([10, 1])
+with _hdr_left:
+    st.markdown("## 🤖 AI Agent")
+with _hdr_right:
+    with st.popover("📎"):
+        st.caption("Attach an image to your next message (max 5 MB).")
+        _uploaded = st.file_uploader(
+            "Image",
+            type=_ACCEPTED_IMAGE_TYPES,
+            label_visibility="collapsed",
+            key=f"_img_uploader_{st.session_state['_upload_counter']}",
+        )
+        if _uploaded is not None:
+            if _uploaded.size > _MAX_UPLOAD_MB * 1024 * 1024:
+                st.error(f"File exceeds {_MAX_UPLOAD_MB} MB limit.")
+            else:
+                _raw = _uploaded.read()
+                _b64 = base64.b64encode(_raw).decode()
+                st.session_state["_attached_image"] = {
+                    "b64": _b64,
+                    "mime": _uploaded.type,
+                    "name": _uploaded.name,
+                }
+                st.image(_raw, width=150)
+                st.caption(f"✓ {_uploaded.name} ready")
+
+# Attachment preview chip (visible when popover is closed)
+if st.session_state.get("_attached_image"):
+    _att = st.session_state["_attached_image"]
+    _ac1, _ac2 = st.columns([0.92, 0.08])
+    with _ac1:
+        st.markdown(
+            f'<div class="attach-chip">📎 {html_lib.escape(_att["name"])}'
+            "</div>",
+            unsafe_allow_html=True,
+        )
+    with _ac2:
+        if st.button("✕", key="_clear_attach", help="Remove attachment"):
+            st.session_state.pop("_attached_image", None)
+            st.session_state["_upload_counter"] += 1
+            st.rerun()
 
 # ---------------------------------------------------------------------------
 # Chat history replay
@@ -360,18 +502,28 @@ if not display_messages and st.session_state["chat_conv_id"] is None:
         unsafe_allow_html=True,
     )
 
-for msg in display_messages:
+for _i, msg in enumerate(display_messages):
     with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
+        _render_message_content(msg["content"])
+        _copy_button(msg["content"], key=f"copy_{msg['role']}_{_i}")
 
 # ---------------------------------------------------------------------------
 # Chat input
 # ---------------------------------------------------------------------------
 
 if prompt := st.chat_input("Ask about your German vocabulary..."):
+    # Grab any pending attachment before rendering
+    _attached = st.session_state.pop("_attached_image", None)
+
     # Display user message immediately
     with st.chat_message("user"):
+        if _attached:
+            st.image(
+                f"data:{_attached['mime']};base64,{_attached['b64']}",
+                width=200,
+            )
         st.markdown(prompt)
+        _copy_button(prompt, key="copy_stream_user")
 
     con = open_db(db_path)
     try:
@@ -385,12 +537,30 @@ if prompt := st.chat_input("Ask about your German vocabulary..."):
             conv_id = storage.create_conversation(con, title)
             st.session_state["chat_conv_id"] = conv_id
 
-        # Save user message
+        # Save user message (text only — images are ephemeral)
         storage.save_message(con, conv_id, "user", prompt)
 
         # Build OpenAI message list from full DB history
         db_msgs = storage.load_messages(con, conv_id)
         openai_messages = _build_openai_messages(db_msgs)
+
+        # Inject attached image into the last user message for the API
+        if _attached:
+            _last = openai_messages[-1]
+            _last["content"] = [
+                {"type": "text", "text": _last["content"]},
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": (
+                            f"data:{_attached['mime']};base64,"
+                            f"{_attached['b64']}"
+                        ),
+                    },
+                },
+            ]
+            # Reset the file uploader widget
+            st.session_state["_upload_counter"] += 1
 
         # Run agent with streaming
         chat_result = ChatResult()
@@ -399,6 +569,10 @@ if prompt := st.chat_input("Ask about your German vocabulary..."):
                 response_text = st.write_stream(
                     run_chat(con, openai_messages, chat_result)
                 )
+            # Copy button for the just-streamed response
+            _copy_button(
+                chat_result.assistant_content, key="copy_stream_resp"
+            )
 
         # Persist intermediate messages (tool calls + responses)
         for imsg in chat_result.intermediate_messages:
