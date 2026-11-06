@@ -1103,8 +1103,10 @@ def practice(
         rng = random.Random(seed)   # seed=None gives a non-deterministic RNG
 
         # ── Question loop ─────────────────────────────────────────────────
-        n_correct = 0
-        q_num     = 0   # questions asked so far (≤ n)
+        n_correct   = 0
+        q_num       = 0   # questions asked so far (≤ n)
+        hot_streak  = 0
+        best_streak = 0
 
         for item in items:
             if q_num >= n:
@@ -1164,20 +1166,32 @@ def practice(
 
             # ── Display result ─────────────────────────────────────────────
             if is_correct:
-                typer.echo("  ✅ Correct!\n")
+                typer.echo("  ✅ Correct!")
                 n_correct += 1
+                hot_streak += 1
+                best_streak = max(best_streak, hot_streak)
+                if hot_streak == 3:
+                    typer.echo("  🔥 3 in a row!")
+                elif hot_streak == 5:
+                    typer.echo("  🔥🔥 5 in a row! On fire!")
+                elif hot_streak >= 10 and hot_streak % 5 == 0:
+                    typer.echo(f"  🔥🔥🔥 {hot_streak} in a row! Unstoppable!")
+                typer.echo("")
             elif drill_type in ("mcq_en_to_de", "mcq_article"):
                 correct_str = choices[correct_idx]
                 typer.echo(
                     f"  ❌ Correct answer: {'ABCD'[correct_idx]}) {correct_str}\n"
                 )
+                hot_streak = 0
             elif error_tags == "near_miss":
                 pct_score = int(similarity * 100) if similarity is not None else 0
                 typer.echo(
                     f"  ⚠️  Close ({pct_score}% match) — Expected: {gold_answer}\n"
                 )
+                hot_streak = 0
             else:
                 typer.echo(f"  ❌ Expected: {gold_answer}\n")
+                hot_streak = 0
 
             # ── Log attempt ───────────────────────────────────────────────
             ts = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
@@ -1214,6 +1228,7 @@ def practice(
             f"── Session complete ─────────────────────\n"
             f"   Score          : {n_correct}/{answered} correct ({pct}%)\n"
             f"   Total attempts : {total_attempts} (all sessions)\n"
+            f"   Best streak    : {best_streak}  🔥\n"
         )
 
     finally:
