@@ -379,6 +379,8 @@ def query_stats(
     * ``near_miss_count`` — attempts tagged ``'near_miss'`` in the window
     * ``near_miss_rate``  — ``near_miss_count / attempts_count`` (0.0 if none)
     * ``last_seen``       — ``MAX(ts)`` across the window, or ``None``
+    * ``avg_latency_ms``  — mean latency of correct answers with a known
+      (> 0) latency, or ``None`` if there are none
     """
     frag, src_params, label = _build_source_filter(
         source, source_prefix, default_pipeline_only
@@ -390,7 +392,9 @@ def query_stats(
         "    COALESCE(AVG(a.is_correct), 0.0)                                    AS accuracy, "
         "    COALESCE(SUM(CASE WHEN a.error_tags LIKE '%near_miss%' "
         "                 THEN 1 ELSE 0 END), 0)                                 AS near_miss_count, "
-        "    MAX(a.ts)                                                            AS last_seen "
+        "    MAX(a.ts)                                                            AS last_seen, "
+        "    AVG(CASE WHEN a.is_correct = 1 AND a.latency_ms > 0 "
+        "             THEN a.latency_ms END)                                      AS avg_latency_ms "
         "FROM vocab_items v "
         "LEFT JOIN attempts a "
         "    ON  a.vocab_id = v.id "
@@ -416,6 +420,7 @@ def query_stats(
         "near_miss_count": nm,
         "near_miss_rate":  nm / att if att else 0.0,
         "last_seen":       row["last_seen"],
+        "avg_latency_ms":  row["avg_latency_ms"],
     }
 
 
