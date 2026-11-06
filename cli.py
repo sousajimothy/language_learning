@@ -324,6 +324,38 @@ def _fmt_ts(ts: Optional[str]) -> str:
     return ts[:10] if ts else "—"
 
 
+_LATENCY_FAST_MS = 3_000
+_LATENCY_SLOW_MS = 8_000
+
+
+def _latency_badge(latency_ms: Optional[int]) -> str:
+    """Return a latency badge like '⚡ 1.2s' for a correct answer.
+
+    Tiers: < 3000 ms ⚡, 3000-7999 ms 🕐, >= 8000 ms 🐢.
+    Returns '' when latency is unknown (None or <= 0).
+    """
+    if not latency_ms or latency_ms <= 0:
+        return ""
+    if latency_ms < _LATENCY_FAST_MS:
+        emoji = "⚡"
+    elif latency_ms < _LATENCY_SLOW_MS:
+        emoji = "🕐"
+    else:
+        emoji = "🐢"
+    return f"{emoji} {latency_ms / 1000:.1f}s"
+
+
+def _avg_response_line(latencies: list[int]) -> str:
+    """Session-summary line for mean latency of correct answers.
+
+    Returns '' when fewer than 3 correct answers have a known latency.
+    """
+    if len(latencies) < 3:
+        return ""
+    avg_s = sum(latencies) / len(latencies) / 1000
+    return f"   Avg response   : {avg_s:.1f}s  (correct answers only)\n"
+
+
 def _fmt_rate(rate: float) -> str:
     """Format a 0.0–1.0 rate as a whole-percent string: '68%'."""
     return f"{rate * 100:.0f}%"
@@ -336,6 +368,10 @@ def _print_stats_block(s: dict, days: int, header: str = "📊 Practice stats") 
     nm_note = (
         f"({_fmt_rate(s['near_miss_rate'])} of attempts)" if att else "(—)"
     )
+    avg_lat = s.get("avg_latency_ms")
+    avg_lat_str = (
+        f"{avg_lat / 1000:.1f}s  (correct answers)" if avg_lat is not None else "—"
+    )
     typer.echo(
         f"\n{header}  [last {days} days]\n"
         f"   Source filter  : {s['filter_label']}\n"
@@ -344,6 +380,7 @@ def _print_stats_block(s: dict, days: int, header: str = "📊 Practice stats") 
         f"   Attempts       : {att}\n"
         f"   Accuracy       : {_fmt_rate(s['accuracy'])}\n"
         f"   Near misses    : {nm}  {nm_note}\n"
+        f"   Avg latency    : {avg_lat_str}\n"
         f"   Last attempt   : {_fmt_ts(s['last_seen'])}\n"
     )
 
@@ -1104,6 +1141,7 @@ def practice(
 
         # ── Question loop ─────────────────────────────────────────────────
         n_correct   = 0
+        correct_latencies: list[int] = []   # known latencies of correct answers
         q_num       = 0   # questions asked so far (≤ n)
         hot_streak  = 0
         best_streak = 0
@@ -1166,7 +1204,12 @@ def practice(
 
             # ── Display result ─────────────────────────────────────────────
             if is_correct:
-                typer.echo("  ✅ Correct!")
+                # TODO(srs-latency): when SRS intervals exist, modulate them
+                # here: fast (<3s) -> full interval, slow (>=8s) -> 0.8x.
+                badge = _latency_badge(latency_ms)
+                typer.echo(f"  ✅ Correct!  {badge}" if badge else "  ✅ Correct!")
+                if latency_ms > 0:
+                    correct_latencies.append(latency_ms)
                 n_correct += 1
                 hot_streak += 1
                 best_streak = max(best_streak, hot_streak)
@@ -1229,6 +1272,7 @@ def practice(
             f"   Score          : {n_correct}/{answered} correct ({pct}%)\n"
             f"   Total attempts : {total_attempts} (all sessions)\n"
             f"   Best streak    : {best_streak}  🔥\n"
+            f"{_avg_response_line(correct_latencies)}"
         )
 
     finally:
